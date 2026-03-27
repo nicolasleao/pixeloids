@@ -4,12 +4,12 @@
     module.exports = api;
     module.exports.default = api;
   } else if (root) {
-    root.AgentFaces = api;
+    root.Pixeloids = api;
   }
 })(typeof globalThis !== 'undefined' ? globalThis : typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  var VERSION = '2.1.0';
+  var VERSION = '2.3.0';
   var VIEWBOX_SIZE = 64;
   var GRID_SIZE = 16;
   var CELL = VIEWBOX_SIZE / GRID_SIZE;
@@ -123,7 +123,7 @@
 
   function normalizeSeed(seed) {
     if (seed === undefined || seed === null || seed === '') {
-      return 'agent-face';
+      return 'pixeloid';
     }
     return String(seed);
   }
@@ -131,7 +131,7 @@
   function normalizeOptions(options) {
     var source = options || {};
     var size = typeof source.size === 'number' && isFinite(source.size) && source.size > 0 ? source.size : 128;
-    var margin = typeof source.margin === 'number' && isFinite(source.margin) && source.margin >= 0 ? source.margin : 4;
+    var margin = typeof source.margin === 'number' && isFinite(source.margin) && source.margin >= 0 ? source.margin : 0;
     var safeMargin = Math.min(margin, Math.floor(VIEWBOX_SIZE / 2) - 1);
 
     return {
@@ -238,11 +238,13 @@
     }
 
     if (traits.cheekStyle === 'dots') {
-      addPart(parts, x + 1, traits.mouthY - 1, 1, 1, palette.accent);
-      addPart(parts, x + w - 2, traits.mouthY - 1, 1, 1, palette.accent);
+      addPart(parts, x + 1, traits.mouthTopY, 1, 1, palette.accent);
+      addPart(parts, x + w - 2, traits.mouthTopY, 1, 1, palette.accent);
     } else if (traits.cheekStyle === 'bars') {
-      addPart(parts, x + 1, traits.eyeY + 1, 1, 2, palette.accent);
-      addPart(parts, x + w - 2, traits.eyeY + 1, 1, 2, palette.accent);
+      var cheekY = traits.eyeY + 1;
+      var cheekHeight = Math.max(1, traits.mouthTopY - cheekY);
+      addPart(parts, x + 1, cheekY, 1, cheekHeight, palette.accent);
+      addPart(parts, x + w - 2, cheekY, 1, cheekHeight, palette.accent);
     }
 
     return parts.join('');
@@ -314,6 +316,8 @@
 
     if (traits.mouthStyle === 'smile') {
       addPart(parts, mouthX - 1, mouthY, 4, 1, palette.outline);
+      addPart(parts, mouthX - 1, mouthY - 1, 1, 1, palette.outline);
+      addPart(parts, mouthX + 2, mouthY - 1, 1, 1, palette.outline);
     } else if (traits.mouthStyle === 'flat') {
       addPart(parts, mouthX, mouthY, 2, 1, palette.outline);
     } else if (traits.mouthStyle === 'open') {
@@ -325,6 +329,7 @@
       addPart(parts, mouthX + 1, mouthY + 1, 1, 1, '#ffffff');
     } else {
       addPart(parts, mouthX - 1, mouthY, 3, 1, palette.outline);
+      addPart(parts, mouthX + 1, mouthY - 1, 1, 1, palette.outline);
     }
 
     return parts.join('');
@@ -377,10 +382,24 @@
     var headY = 2;
     var bodyX = Math.floor((GRID_SIZE - bodyWidth) / 2);
     var bodyY = headY + headHeight;
-    var eyeY = headY + 1;
+    var eyeStyle = pick(rng, ['dots', 'wide', 'blink', 'tall']);
+    var mouthStyle = pick(rng, ['smile', 'flat', 'open', 'fang', 'smirk']);
     var mouthY = headY + headHeight - 2;
+    var mouthTopY = mouthY - (mouthStyle === 'smile' || mouthStyle === 'smirk' ? 1 : 0);
+    var eyeY = headY + 1;
+
+    if (eyeStyle === 'tall' && mouthTopY <= eyeY + 2) {
+      eyeY = Math.max(headY, eyeY - 1);
+    }
+
     var faceLeftX = headX + 2;
     var faceRightX = headX + headWidth - 3;
+
+    if ((eyeStyle === 'wide' || eyeStyle === 'blink') && faceRightX - faceLeftX < 4) {
+      faceLeftX = headX + 1;
+      faceRightX = headX + headWidth - 2;
+    }
+
     var mouthX = headX + Math.floor(headWidth / 2) - 1;
 
     return {
@@ -400,13 +419,14 @@
       bodyWidth: bodyWidth,
       bodyHeight: bodyHeight,
       topperStyle: pick(rng, ['none', 'horns', 'ears', 'antenna', 'sprout', 'tuft', 'cap']),
-      eyeStyle: pick(rng, ['dots', 'wide', 'blink', 'tall']),
+      eyeStyle: eyeStyle,
       eyeY: eyeY,
       faceLeftX: faceLeftX,
       faceRightX: faceRightX,
       mouthX: mouthX,
       mouthY: mouthY,
-      mouthStyle: pick(rng, ['smile', 'flat', 'open', 'fang', 'smirk']),
+      mouthTopY: mouthTopY,
+      mouthStyle: mouthStyle,
       armStyle: pick(rng, ['stub', 'down', 'up']),
       legStyle: pick(rng, ['short', 'wide', 'long']),
       bellyStyle: pick(rng, ['none', 'panel', 'stripe', 'core']),
@@ -453,7 +473,7 @@
   function createSvg(seed, options) {
     var traits = generateTraits(seed, options);
     var normalizedOptions = traits.options;
-    var title = normalizedOptions.title || 'Agent Monster: ' + traits.seed;
+    var title = normalizedOptions.title || 'Pixeloid: ' + traits.seed;
     var parts = [
       buildBackground(traits, traits.palette, normalizedOptions),
       buildBody(traits, traits.palette),

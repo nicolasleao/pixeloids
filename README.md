@@ -1,26 +1,26 @@
-# Agent Faces
+# Pixeloids
 
 Static, framework-agnostic SVG avatar generator for minimal quirky monster characters.
 
 ## Files
 
-- `agent-faces.js` — zero-dependency library file
+- `pixeloids.js` — zero-dependency library file
 - `index.html` — single-page demo and live previewer
 
 ## Browser
 
 ```html
-<script src="./agent-faces.js"></script>
+<script src="./pixeloids.js"></script>
 <script>
-  const svg = AgentFaces.createSvg('demo-seed', { size: 160 });
+  const svg = Pixeloids.createSvg('demo-seed', { size: 160 });
 </script>
 ```
 
 ## CommonJS
 
 ```js
-const AgentFaces = require('./agent-faces.js');
-const avatar = AgentFaces.createAvatar('demo-seed');
+const Pixeloids = require('./pixeloids.js');
+const avatar = Pixeloids.createAvatar('demo-seed');
 ```
 
 ## API

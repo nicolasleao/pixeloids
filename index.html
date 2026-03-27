@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Agent Faces — static monster avatar generator</title>
+    <title>Pixeloids — static monster avatar generator</title>
     <meta
       name="description"
         content="Framework-agnostic static SVG monster avatar generator with deterministic seeded characters."
@@ -254,7 +254,7 @@
     <main class="page">
       <section class="section intro">
         <p class="label">Zero dependency · deterministic · inline SVG</p>
-        <h1>Agent Faces</h1>
+        <h1>Pixeloids</h1>
 
         <div class="hero">
           <div class="avatar-stage" id="avatar-preview" aria-live="polite"></div>
@@ -280,9 +280,9 @@
           </p>
 
         <div class="examples">
-          <pre><code><span class="token-punctuation">&lt;</span><span class="token-property">script</span> <span class="token-property">src</span><span class="token-punctuation">=</span><span class="token-string">"./agent-faces.js"</span><span class="token-punctuation">&gt;&lt;/</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span>
+          <pre><code><span class="token-punctuation">&lt;</span><span class="token-property">script</span> <span class="token-property">src</span><span class="token-punctuation">=</span><span class="token-string">"./pixeloids.js"</span><span class="token-punctuation">&gt;&lt;/</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span>
 <span class="token-punctuation">&lt;</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span>
-  <span class="token-keyword">const</span> svg <span class="token-punctuation">=</span> AgentFaces<span class="token-punctuation">.</span><span class="token-function">createSvg</span><span class="token-punctuation">(</span><span class="token-string">'demo-seed'</span><span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
+  <span class="token-keyword">const</span> svg <span class="token-punctuation">=</span> Pixeloids<span class="token-punctuation">.</span><span class="token-function">createSvg</span><span class="token-punctuation">(</span><span class="token-string">'demo-seed'</span><span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
     <span class="token-property">size</span><span class="token-punctuation">:</span> 160<span class="token-punctuation">,</span>
     <span class="token-property">background</span><span class="token-punctuation">:</span> <span class="token-keyword">true</span>
   <span class="token-punctuation">}</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
@@ -290,9 +290,9 @@
   document<span class="token-punctuation">.</span><span class="token-function">querySelector</span><span class="token-punctuation">(</span><span class="token-string">'#slot'</span><span class="token-punctuation">)</span><span class="token-punctuation">.</span>innerHTML <span class="token-punctuation">=</span> svg<span class="token-punctuation">;</span>
 <span class="token-punctuation">&lt;/</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span></code></pre>
 
-          <pre><code><span class="token-keyword">const</span> AgentFaces <span class="token-punctuation">=</span> <span class="token-function">require</span><span class="token-punctuation">(</span><span class="token-string">'./agent-faces.js'</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
+          <pre><code><span class="token-keyword">const</span> Pixeloids <span class="token-punctuation">=</span> <span class="token-function">require</span><span class="token-punctuation">(</span><span class="token-string">'./pixeloids.js'</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
 
-<span class="token-keyword">const</span> avatar <span class="token-punctuation">=</span> AgentFaces<span class="token-punctuation">.</span><span class="token-function">createAvatar</span><span class="token-punctuation">(</span><span class="token-string">'ops-bot'</span><span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
+<span class="token-keyword">const</span> avatar <span class="token-punctuation">=</span> Pixeloids<span class="token-punctuation">.</span><span class="token-function">createAvatar</span><span class="token-punctuation">(</span><span class="token-string">'ops-bot'</span><span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
   <span class="token-property">size</span><span class="token-punctuation">:</span> 128<span class="token-punctuation">,</span>
   <span class="token-property">background</span><span class="token-punctuation">:</span> <span class="token-keyword">true</span>
 <span class="token-punctuation">}</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
@@ -310,7 +310,7 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
       </section>
     </main>
 
-    <script src="./agent-faces.js"></script>
+    <script src="./pixeloids.js"></script>
     <script>
       (function () {
         var seedInput = document.getElementById('seed-input');
@@ -323,11 +323,11 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
         }
 
         function render(seed) {
-          preview.innerHTML = AgentFaces.createSvg(seed, { size: 288, background: true });
+          preview.innerHTML = Pixeloids.createSvg(seed, { size: 288, background: true });
         }
 
         seedInput.addEventListener('input', function (event) {
-          render(event.target.value || 'agent-face');
+          render(event.target.value || 'pixeloid');
         });
 
         randomizeButton.addEventListener('click', function () {
