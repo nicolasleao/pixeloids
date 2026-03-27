@@ -39,6 +39,12 @@
                 <button id="randomize-button" type="button">Randomize</button>
               </div>
 
+              <label class="label" for="variant-select">Variant</label>
+              <select id="variant-select" class="select-field" aria-label="Avatar variant">
+                <option value="monster" selected>Monster (pixel)</option>
+                <option value="minimal">Minimal (circle)</option>
+              </select>
+
               <div class="toggle-card">
                 <div class="toggle-copy">
                   <strong>Background</strong>
@@ -132,6 +138,7 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
         var backgroundToggle = document.getElementById('background-toggle');
         var downloadSvgButton = document.getElementById('download-svg-button');
         var downloadPngButton = document.getElementById('download-png-button');
+        var variantSelect = document.getElementById('variant-select');
         var copyButtons = document.querySelectorAll('[data-copy-target]');
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         var introTimeouts = [];
@@ -151,7 +158,11 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
 
         function render(seed, includeBackground, isBooting) {
           var safeSeed = seed || 'pixeloid';
-          preview.innerHTML = Pixeloids.createSvg(safeSeed, { size: 320, background: includeBackground });
+          preview.innerHTML = Pixeloids.createSvg(safeSeed, {
+            size: 320,
+            background: includeBackground,
+            variant: variantSelect.value
+          });
         }
 
         function currentBackground() {
@@ -160,6 +171,10 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
 
         function currentSeed() {
           return seedInput.value || 'pixeloid';
+        }
+
+        function currentVariant() {
+          return variantSelect.value;
         }
 
         var EXPORT_SIZE = 320;
@@ -184,7 +199,8 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
         downloadSvgButton.addEventListener('click', function () {
           var svg = Pixeloids.createSvg(currentSeed(), {
             size: EXPORT_SIZE,
-            background: currentBackground()
+            background: currentBackground(),
+            variant: currentVariant()
           });
           var blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
           triggerDownload(blob, safeFilenameBase(currentSeed()) + '.svg');
@@ -194,7 +210,8 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
           var seed = currentSeed();
           var svg = Pixeloids.createSvg(seed, {
             size: EXPORT_SIZE,
-            background: currentBackground()
+            background: currentBackground(),
+            variant: currentVariant()
           });
           var uri = Pixeloids.toDataUri(svg);
           var img = new Image();
@@ -274,6 +291,11 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
         });
 
         backgroundToggle.addEventListener('change', function () {
+          stopIntro();
+          render(seedInput.value || 'pixeloid', currentBackground(), false);
+        });
+
+        variantSelect.addEventListener('change', function () {
           stopIntro();
           render(seedInput.value || 'pixeloid', currentBackground(), false);
         });

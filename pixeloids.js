@@ -9,9 +9,9 @@
 })(typeof globalThis !== 'undefined' ? globalThis : typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  var VERSION = '2.3.1';
-  var VIEWBOX_SIZE = 64;
-  var GRID_SIZE = 16;
+  var VERSION = '2.5.1';
+  var VIEWBOX_SIZE = 100;
+  var GRID_SIZE = 20;
   var CELL = VIEWBOX_SIZE / GRID_SIZE;
 
   var PALETTES = [
@@ -77,6 +77,9 @@
     }
   ];
 
+  var SHARED_EYE_SHAPES = ['dots', 'wide', 'blink', 'tall', 'wink'];
+  var SHARED_MOUTH_SHAPES = ['smile', 'flat', 'open', 'smirk', 'grin'];
+
   function xmur3(input) {
     var h = 1779033703 ^ input.length;
     for (var i = 0; i < input.length; i += 1) {
@@ -128,6 +131,13 @@
     return String(seed);
   }
 
+  function normalizeVariant(variant) {
+    if (variant === undefined || variant === null || variant === '') {
+      return 'monster';
+    }
+    return String(variant).toLowerCase();
+  }
+
   function normalizeOptions(options) {
     var source = options || {};
     var size = typeof source.size === 'number' && isFinite(source.size) && source.size > 0 ? source.size : 128;
@@ -139,8 +149,39 @@
       background: source.background !== false,
       margin: safeMargin,
       title: source.title ? String(source.title) : '',
-      transparentBackground: source.transparentBackground === true
+      transparentBackground: source.transparentBackground === true,
+      variant: normalizeVariant(source.variant)
     };
+  }
+
+  /**
+   * Base class for avatar renderers. Subclasses override render(seed, options)
+   * and return { svg: string, metadata: object }.
+   */
+  function AvatarProvider() {}
+
+  AvatarProvider.prototype.render = function () {
+    throw new Error('AvatarProvider#render must be implemented by subclass');
+  };
+
+  var VARIANT_REGISTRY = {};
+
+  function registerVariant(name, ProviderClass) {
+    VARIANT_REGISTRY[normalizeVariant(name)] = ProviderClass;
+  }
+
+  function getProvider(variant) {
+    var key = normalizeVariant(variant);
+    var Ctor = VARIANT_REGISTRY[key];
+    if (!Ctor) {
+      throw new Error(
+        'Unknown pixeloids variant: "' +
+          key +
+          '". Known variants: ' +
+          Object.keys(VARIANT_REGISTRY).join(', ')
+      );
+    }
+    return new Ctor();
   }
 
   function createRect(x, y, width, height, fill) {
@@ -168,16 +209,21 @@
       createRect(options.margin, options.margin, VIEWBOX_SIZE - options.margin * 2, VIEWBOX_SIZE - options.margin * 2, palette.background)
     ];
 
+    var scale = VIEWBOX_SIZE / 64;
+    var px = function (value) {
+      return Math.round(value * scale);
+    };
+
     if (accent === 'dots') {
-      shapes.push(createRect(16, 16, 4, 4, 'rgba(255,255,255,0.45)'));
-      shapes.push(createRect(44, 12, 4, 4, 'rgba(255,255,255,0.45)'));
-      shapes.push(createRect(12, 44, 4, 4, 'rgba(255,255,255,0.45)'));
+      shapes.push(createRect(px(16), px(16), px(4), px(4), 'rgba(255,255,255,0.45)'));
+      shapes.push(createRect(px(44), px(12), px(4), px(4), 'rgba(255,255,255,0.45)'));
+      shapes.push(createRect(px(12), px(44), px(4), px(4), 'rgba(255,255,255,0.45)'));
     } else if (accent === 'steps') {
-      shapes.push(createRect(8, 12, 12, 4, 'rgba(255,255,255,0.35)'));
-      shapes.push(createRect(44, 44, 12, 4, 'rgba(255,255,255,0.35)'));
+      shapes.push(createRect(px(8), px(12), px(12), px(4), 'rgba(255,255,255,0.35)'));
+      shapes.push(createRect(px(44), px(44), px(12), px(4), 'rgba(255,255,255,0.35)'));
     } else {
-      shapes.push(createRect(8, 8, 12, 12, 'rgba(255,255,255,0.22)'));
-      shapes.push(createRect(44, 44, 8, 8, 'rgba(255,255,255,0.22)'));
+      shapes.push(createRect(px(8), px(8), px(12), px(12), 'rgba(255,255,255,0.22)'));
+      shapes.push(createRect(px(44), px(44), px(8), px(8), 'rgba(255,255,255,0.22)'));
     }
 
     return shapes.join('');
@@ -288,50 +334,68 @@
     return parts.join('');
   }
 
+  function drawFaceParts(parts, anchor, faceStyle, colors, addRect) {
+    if (faceStyle.eyes === 'dots') {
+      addRect(parts, anchor.leftX, anchor.eyeY, 1, 1, colors.ink);
+      addRect(parts, anchor.rightX, anchor.eyeY, 1, 1, colors.ink);
+    } else if (faceStyle.eyes === 'wide') {
+      addRect(parts, anchor.leftX, anchor.eyeY, 2, 1, colors.white);
+      addRect(parts, anchor.rightX - 1, anchor.eyeY, 2, 1, colors.white);
+      addRect(parts, anchor.leftX, anchor.eyeY, 1, 1, colors.ink);
+      addRect(parts, anchor.rightX, anchor.eyeY, 1, 1, colors.ink);
+    } else if (faceStyle.eyes === 'blink') {
+      addRect(parts, anchor.leftX, anchor.eyeY, 2, 1, colors.ink);
+      addRect(parts, anchor.rightX - 1, anchor.eyeY, 2, 1, colors.ink);
+    } else if (faceStyle.eyes === 'wink') {
+      if (anchor.winkSide === 'right') {
+        addRect(parts, anchor.leftX, anchor.eyeY, 1, 1, colors.ink);
+        addRect(parts, anchor.rightX - 1, anchor.eyeY, 2, 1, colors.ink);
+      } else {
+        addRect(parts, anchor.leftX, anchor.eyeY, 2, 1, colors.ink);
+        addRect(parts, anchor.rightX, anchor.eyeY, 1, 1, colors.ink);
+      }
+    } else {
+      addRect(parts, anchor.leftX, anchor.eyeY, 1, 2, colors.white);
+      addRect(parts, anchor.rightX, anchor.eyeY, 1, 2, colors.white);
+      addRect(parts, anchor.leftX, anchor.eyeY, 1, 1, colors.ink);
+      addRect(parts, anchor.rightX, anchor.eyeY, 1, 1, colors.ink);
+    }
+
+    if (faceStyle.mouth === 'smile') {
+      addRect(parts, anchor.mouthX - 1, anchor.mouthY, 4, 1, colors.ink);
+      addRect(parts, anchor.mouthX - 1, anchor.mouthY - 1, 1, 1, colors.ink);
+      addRect(parts, anchor.mouthX + 2, anchor.mouthY - 1, 1, 1, colors.ink);
+    } else if (faceStyle.mouth === 'flat') {
+      addRect(parts, anchor.mouthX, anchor.mouthY, 2, 1, colors.ink);
+    } else if (faceStyle.mouth === 'open') {
+      addRect(parts, anchor.mouthX, anchor.mouthY, 2, 2, colors.ink);
+      addRect(parts, anchor.mouthX, anchor.mouthY + 1, 2, 1, colors.accent);
+    } else if (faceStyle.mouth === 'grin') {
+      addRect(parts, anchor.mouthX - 1, anchor.mouthY, 4, 1, colors.ink);
+      addRect(parts, anchor.mouthX, anchor.mouthY, 1, 1, colors.white);
+      addRect(parts, anchor.mouthX + 1, anchor.mouthY, 1, 1, colors.white);
+    } else {
+      addRect(parts, anchor.mouthX - 1, anchor.mouthY, 3, 1, colors.ink);
+      addRect(parts, anchor.mouthX + 1, anchor.mouthY - 1, 1, 1, colors.ink);
+    }
+  }
+
   function buildFace(traits, palette) {
-    var leftX = traits.faceLeftX;
-    var rightX = traits.faceRightX;
-    var y = traits.eyeY;
-    var mouthX = traits.mouthX;
-    var mouthY = traits.mouthY;
     var parts = [];
-
-    if (traits.eyeStyle === 'dots') {
-      addPart(parts, leftX, y, 1, 1, palette.outline);
-      addPart(parts, rightX, y, 1, 1, palette.outline);
-    } else if (traits.eyeStyle === 'wide') {
-      addPart(parts, leftX, y, 2, 1, '#ffffff');
-      addPart(parts, rightX - 1, y, 2, 1, '#ffffff');
-      addPart(parts, leftX, y, 1, 1, palette.outline);
-      addPart(parts, rightX, y, 1, 1, palette.outline);
-    } else if (traits.eyeStyle === 'blink') {
-      addPart(parts, leftX, y, 2, 1, palette.outline);
-      addPart(parts, rightX - 1, y, 2, 1, palette.outline);
-    } else {
-      addPart(parts, leftX, y, 1, 2, '#ffffff');
-      addPart(parts, rightX, y, 1, 2, '#ffffff');
-      addPart(parts, leftX, y, 1, 1, palette.outline);
-      addPart(parts, rightX, y, 1, 1, palette.outline);
-    }
-
-    if (traits.mouthStyle === 'smile') {
-      addPart(parts, mouthX - 1, mouthY, 4, 1, palette.outline);
-      addPart(parts, mouthX - 1, mouthY - 1, 1, 1, palette.outline);
-      addPart(parts, mouthX + 2, mouthY - 1, 1, 1, palette.outline);
-    } else if (traits.mouthStyle === 'flat') {
-      addPart(parts, mouthX, mouthY, 2, 1, palette.outline);
-    } else if (traits.mouthStyle === 'open') {
-      addPart(parts, mouthX, mouthY, 2, 2, palette.outline);
-      addPart(parts, mouthX, mouthY + 1, 2, 1, palette.accent);
-    } else if (traits.mouthStyle === 'fang') {
-      addPart(parts, mouthX, mouthY, 2, 1, palette.outline);
-      addPart(parts, mouthX, mouthY + 1, 1, 1, '#ffffff');
-      addPart(parts, mouthX + 1, mouthY + 1, 1, 1, '#ffffff');
-    } else {
-      addPart(parts, mouthX - 1, mouthY, 3, 1, palette.outline);
-      addPart(parts, mouthX + 1, mouthY - 1, 1, 1, palette.outline);
-    }
-
+    drawFaceParts(
+      parts,
+      {
+        leftX: traits.faceLeftX,
+        rightX: traits.faceRightX,
+        eyeY: traits.eyeY,
+        mouthX: traits.mouthX,
+        mouthY: traits.mouthY,
+        winkSide: traits.winkSide
+      },
+      traits.faceStyle,
+      { ink: palette.outline, white: '#ffffff', accent: palette.accent },
+      addPart
+    );
     return parts.join('');
   }
 
@@ -419,16 +483,17 @@
     var normalizedOptions = normalizeOptions(options);
     var rng = createRng(normalizedSeed + '|' + VERSION);
     var palette = pick(rng, PALETTES);
-    var headWidth = pick(rng, [8, 9, 10]);
-    var headHeight = pick(rng, [6, 7]);
-    var bodyWidth = pick(rng, [7, 8, 9, 10]);
-    var bodyHeight = pick(rng, [4, 5]);
+    var headWidth = pick(rng, [9, 10, 11, 12]);
+    var headHeight = pick(rng, [7, 8, 9]);
+    var bodyWidth = pick(rng, [8, 9, 10, 11]);
+    var bodyHeight = pick(rng, [5, 6, 7]);
     var headX = Math.floor((GRID_SIZE - headWidth) / 2);
     var headY = 2;
     var bodyX = Math.floor((GRID_SIZE - bodyWidth) / 2);
     var bodyY = headY + headHeight;
-    var eyeStyle = pick(rng, ['dots', 'wide', 'blink', 'tall']);
-    var mouthStyle = pick(rng, ['smile', 'flat', 'open', 'fang', 'smirk']);
+    var eyeStyle = pick(rng, SHARED_EYE_SHAPES);
+    var mouthStyle = pick(rng, SHARED_MOUTH_SHAPES);
+    var faceStyle = { eyes: eyeStyle, mouth: mouthStyle };
     var mouthY = headY + headHeight - 2;
     var mouthTopY = mouthY - (mouthStyle === 'smile' || mouthStyle === 'smirk' ? 1 : 0);
     var eyeY = headY + 1;
@@ -471,6 +536,8 @@
       mouthX: mouthX,
       mouthY: mouthY,
       mouthTopY: mouthTopY,
+      faceStyle: faceStyle,
+      winkSide: pick(rng, ['left', 'right']),
       mouthStyle: mouthStyle,
       armStyle: pick(rng, ['stub', 'down', 'up']),
       legStyle: pick(rng, ['short', 'wide', 'long']),
@@ -479,9 +546,14 @@
     };
   }
 
-  function getMetadata(seed, options) {
-    var traits = generateTraits(seed, options);
+  function selectUnifiedPalette(seed) {
+    var rng = createRng(normalizeSeed(seed) + '|' + VERSION);
+    return pick(rng, PALETTES);
+  }
+
+  function buildMonsterMetadata(traits) {
     return {
+      variant: 'monster',
       seed: traits.seed,
       size: traits.options.size,
       palette: traits.palette.name,
@@ -506,6 +578,7 @@
         topperStyle: traits.topperStyle,
         eyeStyle: traits.eyeStyle,
         mouthStyle: traits.mouthStyle,
+        winkSide: traits.winkSide,
         armStyle: traits.armStyle,
         legStyle: traits.legStyle,
         bellyStyle: traits.bellyStyle,
@@ -515,7 +588,10 @@
     };
   }
 
-  function createSvg(seed, options) {
+  function MonsterAvatarProvider() {}
+  MonsterAvatarProvider.prototype = Object.create(AvatarProvider.prototype);
+  MonsterAvatarProvider.prototype.constructor = MonsterAvatarProvider;
+  MonsterAvatarProvider.prototype.render = function (seed, options) {
     var traits = generateTraits(seed, options);
     var normalizedOptions = traits.options;
     var title = normalizedOptions.title || 'Pixeloid: ' + traits.seed;
@@ -529,19 +605,222 @@
       buildLimbs(traits, traits.palette) +
       '</g>';
 
-    return '' +
-      '<svg xmlns="http://www.w3.org/2000/svg" width="' + normalizedOptions.size + '" height="' + normalizedOptions.size + '" viewBox="0 0 ' + VIEWBOX_SIZE + ' ' + VIEWBOX_SIZE + '" role="img" aria-label="' + escapeXml(title) + '" shape-rendering="crispEdges">' +
-      '<title>' + escapeXml(title) + '</title>' +
+    var svg =
+      '' +
+      '<svg xmlns="http://www.w3.org/2000/svg" width="' +
+      normalizedOptions.size +
+      '" height="' +
+      normalizedOptions.size +
+      '" viewBox="0 0 ' +
+      VIEWBOX_SIZE +
+      ' ' +
+      VIEWBOX_SIZE +
+      '" role="img" aria-label="' +
+      escapeXml(title) +
+      '" shape-rendering="crispEdges">' +
+      '<title>' +
+      escapeXml(title) +
+      '</title>' +
       buildBackground(traits, traits.palette, normalizedOptions) +
       character +
       '</svg>';
+
+    return { svg: svg, metadata: buildMonsterMetadata(traits) };
+  };
+
+  // --- Minimal variant: pixel portraits ---
+
+  function hashNameMinimal(name) {
+    var hash = 5381;
+    var i;
+    for (i = 0; i < name.length; i += 1) {
+      hash = ((hash << 5) + hash + name.charCodeAt(i)) >>> 0;
+    }
+    return hash;
+  }
+
+  function minimalBackgroundPresets() {
+    return [
+      function (bg, accent, s) {
+        return cellRect(0, 0, GRID_SIZE, GRID_SIZE, bg);
+      },
+      function (bg, accent, s) {
+        return cellRect(0, 0, GRID_SIZE, GRID_SIZE, bg) + cellRect(Math.floor(GRID_SIZE / 2), 0, Math.ceil(GRID_SIZE / 2), GRID_SIZE, accent);
+      },
+      function (bg, accent, s) {
+        return cellRect(0, 0, GRID_SIZE, GRID_SIZE, bg) + cellRect(0, Math.floor(GRID_SIZE / 2), GRID_SIZE, Math.ceil(GRID_SIZE / 2), accent);
+      },
+      function (bg, accent, s) {
+        var out = cellRect(0, 0, GRID_SIZE, GRID_SIZE, bg);
+        var y;
+        for (y = 0; y < GRID_SIZE; y += 1) {
+          out += cellRect(y, y, GRID_SIZE - y, 1, accent);
+        }
+        return out;
+      },
+      function (bg, accent, s) {
+        var out = cellRect(0, 0, GRID_SIZE, GRID_SIZE, bg);
+        var x;
+        var y;
+        var dx;
+        var dy;
+        var cx = 0;
+        var cy = GRID_SIZE;
+        var r = Math.floor(GRID_SIZE * 0.7);
+        for (y = 0; y < GRID_SIZE; y += 1) {
+          for (x = 0; x < GRID_SIZE; x += 1) {
+            dx = x + 0.5 - cx;
+            dy = y + 0.5 - cy;
+            if (dx * dx + dy * dy <= r * r) {
+              out += cellRect(x, y, 1, 1, accent);
+            }
+          }
+        }
+        return out;
+      },
+      function (bg, accent, s) {
+        var out = cellRect(0, 0, GRID_SIZE, GRID_SIZE, accent);
+        var inset = Math.floor(GRID_SIZE / 6);
+        var size = GRID_SIZE - inset * 2;
+        out += cellRect(inset, inset, size, size, bg);
+        out += cellRect(inset, inset, 2, 2, accent);
+        out += cellRect(inset + size - 2, inset, 2, 2, accent);
+        out += cellRect(inset, inset + size - 2, 2, 2, accent);
+        out += cellRect(inset + size - 2, inset + size - 2, 2, 2, accent);
+        return out;
+      }
+    ];
+  }
+  function buildMinimalFace(faceStyle, faceColor, accentColor) {
+    var parts = [];
+    drawFaceParts(
+      parts,
+      {
+        leftX: 6,
+        rightX: 13,
+        eyeY: 7,
+        mouthX: 9,
+        mouthY: 12,
+        winkSide: faceStyle.winkSide
+      },
+      faceStyle,
+      { ink: faceColor, white: MINIMAL_FEATURE_LIGHT, accent: accentColor },
+      function (target, x, y, w, h, fill) {
+        target.push(cellRect(x, y, w, h, fill));
+      }
+    );
+    return parts.join('');
+  }
+
+  function minimalUsesWhiteFeatures(faceStyle) {
+    return faceStyle.eyes === 'wide' || faceStyle.eyes === 'tall' || faceStyle.mouth === 'grin';
+  }
+
+  function resolveMinimalColors(palette, faceStyle) {
+    var usesWhite = minimalUsesWhiteFeatures(faceStyle);
+    return {
+      // Keep minimal backgrounds in the same palette family as monster:
+      // light base + mid tone accent by default, darker pair when white details are used.
+      background: usesWhite ? palette.detail : palette.background,
+      accent: usesWhite ? palette.body : palette.head
+    };
+  }
+
+  var MINIMAL_FACE_COLOR = '#172033';
+  var MINIMAL_FEATURE_LIGHT = '#fff';
+  var _minimalBgPresets = minimalBackgroundPresets();
+
+  function MinimalAvatarProvider() {}
+  MinimalAvatarProvider.prototype = Object.create(AvatarProvider.prototype);
+  MinimalAvatarProvider.prototype.constructor = MinimalAvatarProvider;
+  MinimalAvatarProvider.prototype.render = function (seed, options) {
+    var opts = normalizeOptions(options);
+    var normalizedSeed = normalizeSeed(seed);
+    var name = normalizedSeed;
+    var hash = hashNameMinimal(name);
+    var s = opts.size;
+    var palette = selectUnifiedPalette(normalizedSeed);
+    var faceStyle = {
+      eyes: SHARED_EYE_SHAPES[(hash >>> 12) % SHARED_EYE_SHAPES.length],
+      mouth: SHARED_MOUTH_SHAPES[(hash >>> 16) % SHARED_MOUTH_SHAPES.length],
+      winkSide: ((hash >>> 20) & 1) === 1 ? 'right' : 'left'
+    };
+    var minimalColors = resolveMinimalColors(palette, faceStyle);
+    var bg = minimalColors.background;
+    var accent = minimalColors.accent;
+
+    var bgPresetIdx = (hash >>> 4) % _minimalBgPresets.length;
+    var bgSvg = _minimalBgPresets[bgPresetIdx](bg, accent, s);
+    var faceSvg = buildMinimalFace(faceStyle, MINIMAL_FACE_COLOR, accent);
+
+    var title = opts.title || 'Pixeloid: ' + normalizedSeed;
+    var svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="' +
+      s +
+      '" height="' +
+      s +
+      '" viewBox="0 0 ' +
+      VIEWBOX_SIZE +
+      ' ' +
+      VIEWBOX_SIZE +
+      '" role="img" aria-label="' +
+      escapeXml(title) +
+      '" shape-rendering="crispEdges">' +
+      '<title>' +
+      escapeXml(title) +
+      '</title>' +
+      bgSvg +
+      faceSvg +
+      '</svg>';
+
+    var metadata = {
+      variant: 'minimal',
+      seed: normalizedSeed,
+      size: opts.size,
+      palette: palette.name,
+      colors: {
+        background: bg,
+        accent: accent,
+        face: MINIMAL_FACE_COLOR,
+        body: palette.body,
+        head: palette.head,
+        detail: palette.detail,
+        topper: palette.topper,
+        outline: palette.outline
+      },
+      traits: {
+        backgroundPreset: bgPresetIdx,
+        faceEyes: faceStyle.eyes,
+        faceMouth: faceStyle.mouth,
+        winkSide: faceStyle.winkSide,
+        paletteIndex: PALETTES.indexOf(palette)
+      },
+      viewBox: '0 0 ' + VIEWBOX_SIZE + ' ' + VIEWBOX_SIZE
+    };
+
+    return { svg: svg, metadata: metadata };
+  };
+
+  registerVariant('monster', MonsterAvatarProvider);
+  registerVariant('minimal', MinimalAvatarProvider);
+
+  function getMetadata(seed, options) {
+    var opts = normalizeOptions(options);
+    return getProvider(opts.variant).render(seed, opts).metadata;
+  }
+
+  function createSvg(seed, options) {
+    var opts = normalizeOptions(options);
+    return getProvider(opts.variant).render(seed, opts).svg;
   }
 
   function createAvatar(seed, options) {
+    var opts = normalizeOptions(options);
+    var result = getProvider(opts.variant).render(seed, opts);
     return {
       seed: normalizeSeed(seed),
-      svg: createSvg(seed, options),
-      metadata: getMetadata(seed, options)
+      svg: result.svg,
+      metadata: result.metadata
     };
   }
 
@@ -551,6 +830,10 @@
 
   return {
     version: VERSION,
+    AvatarProvider: AvatarProvider,
+    MonsterAvatarProvider: MonsterAvatarProvider,
+    MinimalAvatarProvider: MinimalAvatarProvider,
+    registerVariant: registerVariant,
     createSvg: createSvg,
     getMetadata: getMetadata,
     createAvatar: createAvatar,
