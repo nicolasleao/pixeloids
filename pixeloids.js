@@ -9,7 +9,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  var VERSION = '2.3.0';
+  var VERSION = '2.3.1';
   var VIEWBOX_SIZE = 64;
   var GRID_SIZE = 16;
   var CELL = VIEWBOX_SIZE / GRID_SIZE;
@@ -369,6 +369,51 @@
     return parts.join('');
   }
 
+  /**
+   * Vertical extent of the figure in grid rows (0..GRID_SIZE-1), inclusive.
+   * Used to translate the character so it is centered in the viewBox.
+   */
+  function computeVerticalOffsetGrid(traits) {
+    var headY = traits.headY;
+    var headH = traits.headHeight;
+    var bodyY = traits.bodyY;
+    var bodyH = traits.bodyHeight;
+
+    var minY = traits.topperStyle === 'none' ? headY : headY - 2;
+
+    var maxY = bodyY + bodyH - 1;
+
+    var legMax = bodyY + bodyH;
+    if (traits.legStyle === 'long') {
+      legMax = bodyY + bodyH + 1;
+    }
+    if (legMax > maxY) {
+      maxY = legMax;
+    }
+
+    var armMax = bodyY;
+    if (traits.armStyle === 'stub') {
+      armMax = bodyY + 3;
+    } else if (traits.armStyle === 'down') {
+      armMax = bodyY + 4;
+    } else {
+      armMax = bodyY + 3;
+    }
+    if (armMax > maxY) {
+      maxY = armMax;
+    }
+
+    if (traits.mouthStyle === 'open' && traits.mouthY + 1 > maxY) {
+      maxY = traits.mouthY + 1;
+    }
+    if (traits.eyeStyle === 'tall' && traits.eyeY + 1 > maxY) {
+      maxY = traits.eyeY + 1;
+    }
+
+    var contentHeight = maxY - minY + 1;
+    return Math.floor((GRID_SIZE - contentHeight) / 2) - minY;
+  }
+
   function generateTraits(seed, options) {
     var normalizedSeed = normalizeSeed(seed);
     var normalizedOptions = normalizeOptions(options);
@@ -474,19 +519,21 @@
     var traits = generateTraits(seed, options);
     var normalizedOptions = traits.options;
     var title = normalizedOptions.title || 'Pixeloid: ' + traits.seed;
-    var parts = [
-      buildBackground(traits, traits.palette, normalizedOptions),
-      buildBody(traits, traits.palette),
-      buildHead(traits, traits.palette),
-      buildTopper(traits, traits.palette),
-      buildFace(traits, traits.palette),
-      buildLimbs(traits, traits.palette)
-    ];
+    var offsetY = computeVerticalOffsetGrid(traits) * CELL;
+    var character =
+      '<g transform="translate(0,' + offsetY + ')">' +
+      buildBody(traits, traits.palette) +
+      buildHead(traits, traits.palette) +
+      buildTopper(traits, traits.palette) +
+      buildFace(traits, traits.palette) +
+      buildLimbs(traits, traits.palette) +
+      '</g>';
 
     return '' +
       '<svg xmlns="http://www.w3.org/2000/svg" width="' + normalizedOptions.size + '" height="' + normalizedOptions.size + '" viewBox="0 0 ' + VIEWBOX_SIZE + ' ' + VIEWBOX_SIZE + '" role="img" aria-label="' + escapeXml(title) + '" shape-rendering="crispEdges">' +
       '<title>' + escapeXml(title) + '</title>' +
-      parts.join('') +
+      buildBackground(traits, traits.palette, normalizedOptions) +
+      character +
       '</svg>';
   }
 
