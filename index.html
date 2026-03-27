@@ -39,11 +39,13 @@
                 <button id="randomize-button" type="button">Randomize</button>
               </div>
 
-              <label class="label" for="variant-select">Variant</label>
-              <select id="variant-select" class="select-field" aria-label="Avatar variant">
-                <option value="monster" selected>Monster (pixel)</option>
-                <option value="minimal">Minimal (circle)</option>
-              </select>
+              <label class="label" for="variant-monster">Variant</label>
+              <div class="variant-toggle" role="radiogroup" aria-label="Avatar variant">
+                <input id="variant-monster" type="radio" name="variant" value="monster" checked />
+                <label for="variant-monster">Monster</label>
+                <input id="variant-minimal" type="radio" name="variant" value="minimal" />
+                <label for="variant-minimal">Minimal</label>
+              </div>
 
               <div class="toggle-card">
                 <div class="toggle-copy">
@@ -138,7 +140,7 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
         var backgroundToggle = document.getElementById('background-toggle');
         var downloadSvgButton = document.getElementById('download-svg-button');
         var downloadPngButton = document.getElementById('download-png-button');
-        var variantSelect = document.getElementById('variant-select');
+        var variantInputs = document.querySelectorAll('input[name="variant"]');
         var copyButtons = document.querySelectorAll('[data-copy-target]');
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         var introTimeouts = [];
@@ -161,7 +163,7 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
           preview.innerHTML = Pixeloids.createSvg(safeSeed, {
             size: 320,
             background: includeBackground,
-            variant: variantSelect.value
+            variant: currentVariant()
           });
         }
 
@@ -174,7 +176,8 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
         }
 
         function currentVariant() {
-          return variantSelect.value;
+          var checked = document.querySelector('input[name="variant"]:checked');
+          return checked ? checked.value : 'monster';
         }
 
         var EXPORT_SIZE = 320;
@@ -295,9 +298,11 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
           render(seedInput.value || 'pixeloid', currentBackground(), false);
         });
 
-        variantSelect.addEventListener('change', function () {
-          stopIntro();
-          render(seedInput.value || 'pixeloid', currentBackground(), false);
+        Array.prototype.forEach.call(variantInputs, function (input) {
+          input.addEventListener('change', function () {
+            stopIntro();
+            render(seedInput.value || 'pixeloid', currentBackground(), false);
+          });
         });
 
         randomizeButton.addEventListener('click', function () {
