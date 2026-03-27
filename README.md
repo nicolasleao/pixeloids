@@ -1,8 +1,12 @@
 # Pixeloids
+Procedural SVG avatar generator for minimal quirky monster characters.
 
-![Animated demo: cycle of procedural Pixeloids avatars](assets/pixeloids-demo.gif)
+### variant: monster
+![monster](assets/pixeloids-monster-demo.gif)
 
-Static, framework-agnostic SVG avatar generator for minimal quirky monster characters.
+### variant: minimal
+![minimal](assets/pixeloids-minimal-demo.gif)
+
 
 ## Install
 
@@ -24,13 +28,39 @@ console.log(avatar.svg);
 console.log(avatar.metadata);
 ```
 
-## Browser
+## Usage (Browser)
 
 ```html
 <script src="./pixeloids.js"></script>
 <script>
   const svg = Pixeloids.createSvg('demo-seed', { size: 160 });
 </script>
+```
+
+## Core Options
+
+Choose avatar style with `variant`:
+
+```js
+const monsterSvg = Pixeloids.createSvg('demo-seed', { variant: 'monster' }); // default
+const minimalSvg = Pixeloids.createSvg('demo-seed', { variant: 'minimal' });
+```
+
+Toggle background with `background`:
+
+```js
+const withBackground = Pixeloids.createSvg('demo-seed', { background: true }); // default
+const transparent = Pixeloids.createSvg('demo-seed', { background: false });
+```
+
+Use both together:
+
+```js
+const svg = Pixeloids.createSvg('demo-seed', {
+  variant: 'minimal',
+  background: false,
+  size: 160
+});
 ```
 
 If you are working from a clone without installing it as a dependency, use `require('./pixeloids.js')` instead.
@@ -41,7 +71,8 @@ If you are working from a clone without installing it as a dependency, use `requ
 
 ### Repository files
 - `assets/style.css` — demo page styles
-- `assets/pixeloids-demo.gif` — README preview (regenerate with `npm run generate:readme-gif`)
+- `assets/pixeloids-monster-demo.gif` — README monster preview (regenerate with `npm run generate:readme-gif`)
+- `assets/pixeloids-minimal-demo.gif` — README minimal preview (regenerate with `npm run generate:readme-gif`)
 - `index.html` — single-page demo and live previewer
 
 ## API
@@ -51,7 +82,16 @@ If you are working from a clone without installing it as a dependency, use `requ
 - `createAvatar(seed, options)`
 - `toDataUri(svg)`
 
-Options: `size`, `background`, `margin`, `title`, `transparentBackground`.
+`createSvg` returns only the SVG string.  
+`createAvatar` returns `{ seed, svg, metadata }` for when you also need structured avatar data.
+
+```js
+const svg = Pixeloids.createSvg('demo-seed', { variant: 'monster' });
+const avatar = Pixeloids.createAvatar('demo-seed', { variant: 'monster' });
+// avatar.seed, avatar.svg, avatar.metadata
+```
+
+Options: `variant` (`monster` | `minimal`), `background`, `size`, `margin`, `title`, `transparentBackground`.
 
 Deterministic trait output is based on a stable hash of `seed + version` and a Mulberry32 PRNG.
 Render options like `size`, `margin`, and `title` change presentation without changing the underlying character.

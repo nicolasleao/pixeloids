@@ -31,7 +31,16 @@ const SEEDS = [
 
 const FRAME_SIZE = 320;
 const FRAME_DELAY_MS = 450;
-const OUT = path.join(__dirname, '..', 'assets', 'pixeloids-demo.gif');
+const OUTPUTS = [
+  {
+    variant: 'monster',
+    out: path.join(__dirname, '..', 'assets', 'pixeloids-monster-demo.gif')
+  },
+  {
+    variant: 'minimal',
+    out: path.join(__dirname, '..', 'assets', 'pixeloids-minimal-demo.gif')
+  }
+];
 
 async function frameToIndexed(svg) {
   const { data, info } = await sharp(Buffer.from(svg))
@@ -46,14 +55,15 @@ async function frameToIndexed(svg) {
   return { index, width: info.width, height: info.height, palette };
 }
 
-async function main() {
+async function writeVariantGif(config) {
   const gif = GIFEncoder();
   let i = 0;
 
   for (const seed of SEEDS) {
     const svg = Pixeloids.createSvg(seed, {
       size: FRAME_SIZE,
-      background: true
+      background: true,
+      variant: config.variant
     });
     const { index, width, height, palette } = await frameToIndexed(svg);
     var opts = { palette: palette, delay: FRAME_DELAY_MS };
@@ -65,8 +75,14 @@ async function main() {
   }
 
   gif.finish();
-  fs.writeFileSync(OUT, Buffer.from(gif.bytes()));
-  console.log('Wrote', OUT, '(' + SEEDS.length + ' frames)');
+  fs.writeFileSync(config.out, Buffer.from(gif.bytes()));
+  console.log('Wrote', config.out, '(' + SEEDS.length + ' frames)');
+}
+
+async function main() {
+  for (const config of OUTPUTS) {
+    await writeVariantGif(config);
+  }
 }
 
 main().catch(function (err) {
