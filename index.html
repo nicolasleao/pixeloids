@@ -21,6 +21,7 @@
       <section class="section hero-shell">
         <div class="hero-copy">
           <h1>Pixeloids</h1>
+          <p class="hero-byline">by <a href="https://github.com/nicolasleao/" target="_blank" rel="noopener noreferrer">@nicolasleao</a></p>
           <p class="hero-subtitle">
             Procedural monster avatars for static sites, scripts, prototypes, and anywhere else a seed should always resolve to the exact same creature.
           </p>
@@ -115,21 +116,104 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
             <p class="tiny">
               API: <code>createSvg</code> · <code>getMetadata</code> · <code>createAvatar</code> · <code>toDataUri</code>
             </p>
-            <a class="button-link donate-link" href="#">
+            <p class="donate-lead">Support my work</p>
+            <button class="button-link donate-link" id="donate-button" type="button" aria-haspopup="dialog" aria-controls="donate-modal">
               <svg class="coin-icon" viewBox="0 0 16 16" aria-hidden="true">
-                <rect x="4" y="1" width="8" height="2" fill="#16120e"></rect>
-                <rect x="2" y="3" width="12" height="2" fill="#16120e"></rect>
-                <rect x="1" y="5" width="14" height="6" fill="#f3b63f"></rect>
-                <rect x="2" y="11" width="12" height="2" fill="#d69424"></rect>
-                <rect x="4" y="13" width="8" height="2" fill="#16120e"></rect>
-                <rect x="7" y="6" width="2" height="4" fill="#16120e"></rect>
+                <rect x="5" y="1" width="6" height="1" fill="#16120e"></rect>
+                <rect x="3" y="2" width="10" height="1" fill="#16120e"></rect>
+                <rect x="2" y="3" width="12" height="1" fill="#16120e"></rect>
+                <rect x="1" y="4" width="14" height="8" fill="#16120e"></rect>
+                <rect x="2" y="12" width="12" height="1" fill="#16120e"></rect>
+                <rect x="3" y="13" width="10" height="1" fill="#16120e"></rect>
+                <rect x="5" y="14" width="6" height="1" fill="#16120e"></rect>
+
+                <rect x="2" y="4" width="12" height="8" fill="#f5c857"></rect>
+                <rect x="3" y="3" width="10" height="1" fill="#f5c857"></rect>
+                <rect x="3" y="12" width="10" height="1" fill="#d89a2e"></rect>
+                <rect x="4" y="2" width="8" height="1" fill="#ffe08b"></rect>
+
+                <rect x="5" y="5" width="6" height="1" fill="#fff0b8"></rect>
+                <rect x="4" y="6" width="8" height="1" fill="#f6d37a"></rect>
+                <rect x="4" y="7" width="8" height="2" fill="#e5ad42"></rect>
+                <rect x="5" y="9" width="6" height="1" fill="#d3932f"></rect>
+                <rect x="6" y="6" width="1" height="3" fill="#9f661f"></rect>
               </svg>
               Donate
-            </a>
+            </button>
           </div>
         </div>
       </section>
     </main>
+
+    <div class="modal-backdrop" id="donate-modal" role="dialog" aria-modal="true" aria-labelledby="donate-modal-title" hidden>
+      <div class="modal-card">
+        <button class="modal-close-x" id="donate-modal-close" type="button" aria-label="Close donate dialog">
+          <svg viewBox="0 0 12 12" width="14" height="14" aria-hidden="true">
+            <rect x="1" y="2" width="2" height="2" fill="currentColor"/><rect x="3" y="4" width="2" height="2" fill="currentColor"/>
+            <rect x="5" y="6" width="2" height="2" fill="currentColor"/><rect x="7" y="4" width="2" height="2" fill="currentColor"/>
+            <rect x="9" y="2" width="2" height="2" fill="currentColor"/><rect x="3" y="6" width="2" height="2" fill="currentColor"/>
+            <rect x="7" y="6" width="2" height="2" fill="currentColor"/><rect x="1" y="8" width="2" height="2" fill="currentColor"/>
+            <rect x="9" y="8" width="2" height="2" fill="currentColor"/>
+          </svg>
+        </button>
+
+        <div class="modal-hero">
+          <div class="modal-mascot" id="donate-mascot" aria-hidden="true"></div>
+          <h3 id="donate-modal-title">Keep the Monsters Alive</h3>
+          <p class="modal-pitch">
+            Pixeloids is free, open-source and built by one person. If you can, please support my projects with any token.
+          </p>
+        </div>
+
+        <div class="wallet-list">
+          <div class="wallet-row" style="--row-i:0">
+            <div class="wallet-label">
+              <svg class="wallet-icon" viewBox="0 0 16 16" aria-hidden="true">
+                <polygon points="8,1 15,8 8,15 1,8" fill="#627eea"/>
+                <polygon points="8,3 12,8 8,10" fill="#c0cbf6" opacity="0.7"/>
+                <polygon points="8,3 4,8 8,10" fill="#8198ee"/>
+              </svg>
+              <span class="wallet-network">Ethereum</span>
+            </div>
+            <div class="wallet-addr-row">
+              <code class="wallet-address">0x20bD59Aa01dbc44Bf24a57BF310D94460ae707C3</code>
+              <button class="copy-wallet-button" type="button" data-copy-value="0x20bD59Aa01dbc44Bf24a57BF310D94460ae707C3">Copy</button>
+            </div>
+          </div>
+
+          <div class="wallet-row" style="--row-i:1">
+            <div class="wallet-label">
+              <svg class="wallet-icon" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="7" fill="#f7931a"/>
+                <text x="8" y="11.5" text-anchor="middle" font-size="10" font-weight="bold" fill="#fff" font-family="monospace">B</text>
+              </svg>
+              <span class="wallet-network">Bitcoin</span>
+            </div>
+            <div class="wallet-addr-row">
+              <code class="wallet-address">bc1qycmxjlqn22cu6u8cpa37g4aasewcqz2aegkags</code>
+              <button class="copy-wallet-button" type="button" data-copy-value="bc1qycmxjlqn22cu6u8cpa37g4aasewcqz2aegkags">Copy</button>
+            </div>
+          </div>
+
+          <div class="wallet-row" style="--row-i:2">
+            <div class="wallet-label">
+              <svg class="wallet-icon" viewBox="0 0 16 16" aria-hidden="true">
+                <circle cx="8" cy="8" r="7" fill="#0052ff"/>
+                <rect x="5" y="6" width="6" height="1.5" rx="0" fill="#fff"/>
+                <rect x="5" y="8.5" width="6" height="1.5" rx="0" fill="#fff"/>
+              </svg>
+              <span class="wallet-network">Base</span>
+            </div>
+            <div class="wallet-addr-row">
+              <code class="wallet-address">0x20bD59Aa01dbc44Bf24a57BF310D94460ae707C3</code>
+              <button class="copy-wallet-button" type="button" data-copy-value="0x20bD59Aa01dbc44Bf24a57BF310D94460ae707C3">Copy</button>
+            </div>
+          </div>
+        </div>
+
+        <p class="modal-thanks">Thank you!</p>
+      </div>
+    </div>
 
     <script src="./pixeloids.js"></script>
     <script>
@@ -142,10 +226,15 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
         var downloadPngButton = document.getElementById('download-png-button');
         var variantInputs = document.querySelectorAll('input[name="variant"]');
         var copyButtons = document.querySelectorAll('[data-copy-target]');
+        var donateButton = document.getElementById('donate-button');
+        var donateModal = document.getElementById('donate-modal');
+        var donateModalClose = document.getElementById('donate-modal-close');
+        var walletCopyButtons = document.querySelectorAll('.copy-wallet-button');
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         var introTimeouts = [];
         var introCancelled = false;
         var initialSeed = randomSeed();
+        var lastFocusedElement = null;
 
         function randomSeed() {
           var parts = ['gob', 'moss', 'zap', 'blob', 'sprout', 'fang', 'bloop', 'glitch'];
@@ -323,6 +412,79 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
             }
 
             navigator.clipboard.writeText(target.textContent).then(function () {
+              button.textContent = 'Copied';
+              window.setTimeout(function () {
+                button.textContent = originalLabel;
+              }, 1200);
+            });
+          });
+        });
+
+        function closeDonateModal() {
+          if (!donateModal || donateModal.hidden) {
+            return;
+          }
+
+          donateModal.hidden = true;
+          document.body.classList.remove('modal-open');
+          if (lastFocusedElement) {
+            lastFocusedElement.focus();
+          }
+        }
+
+        function openDonateModal() {
+          if (!donateModal) {
+            return;
+          }
+
+          lastFocusedElement = document.activeElement;
+
+          var mascot = document.getElementById('donate-mascot');
+          if (mascot && typeof Pixeloids !== 'undefined') {
+            mascot.innerHTML = Pixeloids.createSvg(randomSeed(), {
+              size: 100,
+              background: false
+            });
+          }
+
+          donateModal.hidden = false;
+          document.body.classList.add('modal-open');
+          if (donateModalClose) {
+            donateModalClose.focus();
+          }
+        }
+
+        if (donateButton) {
+          donateButton.addEventListener('click', openDonateModal);
+        }
+
+        if (donateModalClose) {
+          donateModalClose.addEventListener('click', closeDonateModal);
+        }
+
+        if (donateModal) {
+          donateModal.addEventListener('click', function (event) {
+            if (event.target === donateModal) {
+              closeDonateModal();
+            }
+          });
+        }
+
+        document.addEventListener('keydown', function (event) {
+          if (event.key === 'Escape') {
+            closeDonateModal();
+          }
+        });
+
+        Array.prototype.forEach.call(walletCopyButtons, function (button) {
+          button.addEventListener('click', function () {
+            var address = button.getAttribute('data-copy-value');
+            var originalLabel = button.textContent;
+            if (!address || !navigator.clipboard) {
+              return;
+            }
+
+            navigator.clipboard.writeText(address).then(function () {
               button.textContent = 'Copied';
               window.setTimeout(function () {
                 button.textContent = originalLabel;

@@ -134,6 +134,24 @@ h2 {
     max-width: 60rem;
 }
 
+.hero-byline {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+}
+
+.hero-byline a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.hero-byline a:hover,
+.hero-byline a:focus-visible {
+    text-decoration: underline;
+}
+
 .hero-subtitle {
     max-width: 44rem;
     color: var(--muted);
@@ -532,7 +550,19 @@ code {
 
 .footer {
     align-items: center;
-    justify-content: space-between;
+    justify-items: center;
+    gap: 14px;
+    margin-top: 34px;
+    text-align: center;
+}
+
+.donate-lead {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.45;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
 }
 
 .donate-link {
@@ -540,12 +570,214 @@ code {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
+    padding: 11px 18px;
+    justify-self: center;
 }
 
 .coin-icon {
     width: 16px;
     height: 16px;
     flex: 0 0 auto;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+@keyframes modal-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes card-in {
+    from { opacity: 0; transform: translateY(18px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes row-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    background: rgba(14, 11, 8, 0.72);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    animation: modal-in 220ms ease-out both;
+}
+
+.modal-backdrop[hidden] {
+    display: none;
+}
+
+.modal-card {
+    position: relative;
+    width: min(100%, 540px);
+    border: 3px solid var(--line);
+    background: #fff3d5;
+    box-shadow: 8px 8px 0 rgba(22, 18, 14, 0.28);
+    padding: 28px 24px 24px;
+    display: grid;
+    gap: 0;
+    animation: card-in 320ms 80ms ease-out both;
+}
+
+.modal-close-x {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 2px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    z-index: 2;
+}
+
+.modal-close-x:hover,
+.modal-close-x:focus-visible {
+    color: var(--ink);
+    background: rgba(22, 18, 14, 0.06);
+    border-color: var(--line);
+    transform: none;
+    box-shadow: none;
+}
+
+.modal-hero {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 8px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 3px solid rgba(22, 18, 14, 0.1);
+}
+
+.modal-mascot {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 4px;
+}
+
+.modal-mascot svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    image-rendering: pixelated;
+}
+
+.modal-hero h3 {
+    margin: 0;
+    font-size: clamp(28px, 5vw, 38px);
+    font-family: "VT323", monospace;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    background: black;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.modal-pitch {
+    margin: 0;
+    /* max-width: 38ch; */
+    padding: 0 20px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--muted);
+}
+
+.wallet-list {
+    display: grid;
+    gap: 14px;
+    padding: 4px 0;
+}
+
+.wallet-row {
+    display: grid;
+    gap: 6px;
+    animation: row-in 280ms ease-out both;
+    animation-delay: calc(180ms + var(--row-i, 0) * 80ms);
+}
+
+.wallet-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.wallet-icon {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+}
+
+.wallet-network {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.wallet-addr-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0;
+}
+
+.wallet-address {
+    min-height: 42px;
+    padding: 10px 10px;
+    border: 3px solid var(--line);
+    background: var(--code-bg);
+    color: var(--code-text);
+    font-size: 12px;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: inline-flex;
+    align-items: center;
+}
+
+.copy-wallet-button {
+    min-height: 42px;
+    padding: 10px 14px;
+    border: 3px solid var(--line);
+    border-left: 0;
+    background: var(--panel-strong);
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+}
+
+.copy-wallet-button:hover,
+.copy-wallet-button:focus-visible {
+    background: #f2cf6b;
+}
+
+.modal-thanks {
+    margin: 0;
+    padding-top: 18px;
+    border-top: 3px solid rgba(22, 18, 14, 0.1);
+    margin-top: 18px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent-strong);
+    letter-spacing: 0.02em;
 }
 
 @media (min-width: 840px) {
@@ -629,6 +861,33 @@ code {
         justify-items: center;
         text-align: center;
         gap: 14px;
+    }
+
+    .modal-backdrop {
+        padding: 10px;
+    }
+
+    .modal-card {
+        padding: 18px 14px 16px;
+    }
+
+    .modal-hero {
+        padding-bottom: 14px;
+        margin-bottom: 14px;
+    }
+
+    .modal-mascot {
+        width: 80px;
+        height: 80px;
+    }
+
+    .wallet-address {
+        font-size: 10px;
+    }
+
+    .modal-thanks {
+        padding-top: 14px;
+        margin-top: 14px;
     }
 
     .input-row {
