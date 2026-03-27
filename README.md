@@ -31,7 +31,12 @@ console.log(avatar.metadata);
 ## Usage (Browser)
 
 ```html
+<!-- Local file (download from this repo) -->
 <script src="./pixeloids.js"></script>
+
+<!-- Direct from GitHub raw -->
+<script src="https://raw.githubusercontent.com/nicolasleao/pixeloids/refs/heads/main/pixeloids.js"></script>
+
 <script>
   const svg = Pixeloids.createSvg('demo-seed', { size: 160 });
 </script>
