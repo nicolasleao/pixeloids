@@ -16,16 +16,31 @@ Until the package is on the npm registry, install from GitHub:
 npm install github:nicolasleao/pixeloids
 ```
 
+## Usage (React / Next.js)
+
+```jsx
+import Pixeloids from 'pixeloids';
+
+export default function Avatar({ seed }) {
+  const svg = Pixeloids.createSvg(seed, {
+    size: 128,
+    background: true
+  });
+
+  return <div dangerouslySetInnerHTML={{ __html: svg }} />;
+}
+```
+
 ## Usage (Node)
 
 ```js
 const Pixeloids = require('pixeloids');
 
-const svg = Pixeloids.createSvg('demo-seed', { size: 160 });
-const avatar = Pixeloids.createAvatar('demo-seed');
+const avatar = Pixeloids.createAvatar('demo-seed', { size: 160 });
 
-console.log(avatar.svg);
-console.log(avatar.metadata);
+// avatar.seed     → 'demo-seed'
+// avatar.svg      → '<svg …>…</svg>'
+// avatar.metadata → { variant, palette, colors, traits }
 ```
 
 ## Usage (Browser)
@@ -93,7 +108,9 @@ If you are working from a clone without installing it as a dependency, use `requ
 ```js
 const svg = Pixeloids.createSvg('demo-seed', { variant: 'monster' });
 const avatar = Pixeloids.createAvatar('demo-seed', { variant: 'monster' });
-// avatar.seed, avatar.svg, avatar.metadata
+// avatar.seed     → 'demo-seed'
+// avatar.svg      → '<svg …>…</svg>'
+// avatar.metadata → { variant, palette, colors, traits }
 ```
 
 Options: `variant` (`monster` | `minimal`), `background`, `size`, `margin`, `title`, `transparentBackground`.

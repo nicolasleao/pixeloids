@@ -128,6 +128,23 @@
           <div class="examples-grid">
             <div class="code-card">
               <div class="code-toolbar">
+                <span>React / Next.js</span>
+                <button class="copy-button" type="button" data-copy-target="example-react">Copy</button>
+              </div>
+              <pre><code id="example-react"><span class="token-keyword">import</span> Pixeloids <span class="token-keyword">from</span> <span class="token-string">'pixeloids'</span><span class="token-punctuation">;</span>
+
+<span class="token-keyword">export default function</span> <span class="token-function">Avatar</span><span class="token-punctuation">(</span><span class="token-punctuation">{</span> seed <span class="token-punctuation">}</span><span class="token-punctuation">)</span> <span class="token-punctuation">{</span>
+  <span class="token-keyword">const</span> svg <span class="token-punctuation">=</span> Pixeloids<span class="token-punctuation">.</span><span class="token-function">createSvg</span><span class="token-punctuation">(</span>seed<span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
+    <span class="token-property">size</span><span class="token-punctuation">:</span> 128<span class="token-punctuation">,</span>
+    <span class="token-property">background</span><span class="token-punctuation">:</span> <span class="token-keyword">true</span>
+  <span class="token-punctuation">}</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
+
+  <span class="token-keyword">return</span> <span class="token-punctuation">&lt;</span><span class="token-property">div</span> <span class="token-property">dangerouslySetInnerHTML</span><span class="token-punctuation">={</span><span class="token-punctuation">{</span> <span class="token-property">__html</span><span class="token-punctuation">:</span> svg <span class="token-punctuation">}</span><span class="token-punctuation">}</span> <span class="token-punctuation">/&gt;</span><span class="token-punctuation">;</span>
+<span class="token-punctuation">}</span></code></pre>
+            </div>
+
+            <div class="code-card">
+              <div class="code-toolbar">
                 <span>Browser</span>
                 <button class="copy-button" type="button" data-copy-target="example-browser">Copy</button>
               </div>
@@ -147,15 +164,16 @@
                 <span>Node / CommonJS</span>
                 <button class="copy-button" type="button" data-copy-target="example-node">Copy</button>
               </div>
-              <pre><code id="example-node"><span class="token-keyword">const</span> Pixeloids <span class="token-punctuation">=</span> <span class="token-function">require</span><span class="token-punctuation">(</span><span class="token-string">'./pixeloids.js'</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
+              <pre><code id="example-node"><span class="token-keyword">const</span> Pixeloids <span class="token-punctuation">=</span> <span class="token-function">require</span><span class="token-punctuation">(</span><span class="token-string">'pixeloids'</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
 
 <span class="token-keyword">const</span> avatar <span class="token-punctuation">=</span> Pixeloids<span class="token-punctuation">.</span><span class="token-function">createAvatar</span><span class="token-punctuation">(</span><span class="token-string">'ops-bot'</span><span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
   <span class="token-property">size</span><span class="token-punctuation">:</span> 128<span class="token-punctuation">,</span>
   <span class="token-property">background</span><span class="token-punctuation">:</span> <span class="token-keyword">true</span>
 <span class="token-punctuation">}</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
 
-console<span class="token-punctuation">.</span><span class="token-function">log</span><span class="token-punctuation">(</span>avatar<span class="token-punctuation">.</span>svg<span class="token-punctuation">)</span><span class="token-punctuation">;</span>
-console<span class="token-punctuation">.</span><span class="token-function">log</span><span class="token-punctuation">(</span>avatar<span class="token-punctuation">.</span>metadata<span class="token-punctuation">)</span><span class="token-punctuation">;</span></code></pre>
+<span class="token-comment">// avatar.seed     → 'ops-bot'</span>
+<span class="token-comment">// avatar.svg      → '&lt;svg …&gt;…&lt;/svg&gt;'</span>
+<span class="token-comment">// avatar.metadata → { variant, palette, colors, traits }</span></code></pre>
             </div>
           </div>
 
