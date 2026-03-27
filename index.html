@@ -3,11 +3,58 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Pixeloids — static monster avatar generator</title>
+    <title>Pixeloids — Procedural pixel-art monster avatars from any seed</title>
     <meta
       name="description"
-        content="Framework-agnostic static SVG monster avatar generator with deterministic seeded characters."
+      content="Procedural pixel-art monster avatars from any seed string. Zero dependencies, deterministic SVGs for static sites, Node scripts, and prototypes."
     />
+    <meta name="author" content="Nicolas Leao" />
+    <meta name="theme-color" content="#f4efe2" />
+    <link rel="canonical" href="https://nicolasleao.github.io/pixeloids/" />
+
+    <!-- Inline SVG favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='3' y='2' width='10' height='2' fill='%232f7a51'/%3E%3Crect x='2' y='4' width='12' height='8' fill='%232f7a51'/%3E%3Crect x='3' y='12' width='10' height='2' fill='%232f7a51'/%3E%3Crect x='4' y='5' width='2' height='2' fill='%23fff'/%3E%3Crect x='10' y='5' width='2' height='2' fill='%23fff'/%3E%3Crect x='5' y='9' width='6' height='2' fill='%23174e31'/%3E%3Crect x='6' y='9' width='1' height='1' fill='%23fff'/%3E%3Crect x='9' y='9' width='1' height='1' fill='%23fff'/%3E%3C/svg%3E" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Pixeloids — Procedural pixel-art monster avatars" />
+    <meta property="og:description" content="Generate deterministic pixel-art monster SVGs from any seed string. Zero dependencies — works in browsers, Node, and static sites." />
+    <meta property="og:url" content="https://nicolasleao.github.io/pixeloids/" />
+    <meta property="og:site_name" content="Pixeloids" />
+    <meta property="og:image" content="https://raw.githubusercontent.com/nicolasleao/pixeloids/main/assets/pixeloids-monster-demo.gif" />
+    <meta property="og:image:alt" content="Grid of procedurally generated pixel-art monster avatars" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Pixeloids — Procedural pixel-art monster avatars" />
+    <meta name="twitter:description" content="Generate deterministic pixel-art monster SVGs from any seed string. Zero dependencies — works in browsers, Node, and static sites." />
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/nicolasleao/pixeloids/main/assets/pixeloids-monster-demo.gif" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Pixeloids",
+      "description": "Procedural pixel-art monster avatar generator. Zero dependencies, deterministic SVGs from any seed string.",
+      "url": "https://nicolasleao.github.io/pixeloids/",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any",
+      "author": {
+        "@type": "Person",
+        "name": "Nicolas Leao",
+        "url": "https://github.com/nicolasleao"
+      },
+      "license": "https://opensource.org/licenses/MIT",
+      "codeRepository": "https://github.com/nicolasleao/pixeloids",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
