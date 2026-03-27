@@ -22,7 +22,7 @@
         <div class="hero-copy">
           <h1>Pixeloids</h1>
           <p class="hero-subtitle">
-            Sharp little monster avatars for static sites, scripts, prototypes, and anywhere else a seed should always resolve to the exact same creature.
+            Procedural monster avatars for static sites, scripts, prototypes, and anywhere else a seed should always resolve to the exact same creature.
           </p>
         </div>
 
@@ -49,6 +49,11 @@
                   <span class="switch-ui" aria-hidden="true"></span>
                 </label>
               </div>
+            </div>
+
+            <div class="download-row" role="group" aria-label="Download avatar">
+              <button id="download-svg-button" type="button">Download SVG</button>
+              <button id="download-png-button" type="button">Download PNG</button>
             </div>
           </div>
         </div>
@@ -125,6 +130,8 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
         var preview = document.getElementById('avatar-preview');
         var randomizeButton = document.getElementById('randomize-button');
         var backgroundToggle = document.getElementById('background-toggle');
+        var downloadSvgButton = document.getElementById('download-svg-button');
+        var downloadPngButton = document.getElementById('download-png-button');
         var copyButtons = document.querySelectorAll('[data-copy-target]');
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         var introTimeouts = [];
@@ -150,6 +157,71 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
         function currentBackground() {
           return backgroundToggle.checked;
         }
+
+        function currentSeed() {
+          return seedInput.value || 'pixeloid';
+        }
+
+        var EXPORT_SIZE = 320;
+
+        function safeFilenameBase(seed) {
+          var base = String(seed || 'pixeloid').replace(/[^\w\-]+/g, '-').replace(/^-+|-+$/g, '');
+          return base || 'pixeloid';
+        }
+
+        function triggerDownload(blob, filename) {
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          a.rel = 'noopener';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+
+        downloadSvgButton.addEventListener('click', function () {
+          var svg = Pixeloids.createSvg(currentSeed(), {
+            size: EXPORT_SIZE,
+            background: currentBackground()
+          });
+          var blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+          triggerDownload(blob, safeFilenameBase(currentSeed()) + '.svg');
+        });
+
+        downloadPngButton.addEventListener('click', function () {
+          var seed = currentSeed();
+          var svg = Pixeloids.createSvg(seed, {
+            size: EXPORT_SIZE,
+            background: currentBackground()
+          });
+          var uri = Pixeloids.toDataUri(svg);
+          var img = new Image();
+
+          img.onload = function () {
+            var canvas = document.createElement('canvas');
+            canvas.width = EXPORT_SIZE;
+            canvas.height = EXPORT_SIZE;
+            var ctx = canvas.getContext('2d');
+            if (!ctx) {
+              return;
+            }
+            ctx.drawImage(img, 0, 0, EXPORT_SIZE, EXPORT_SIZE);
+            canvas.toBlob(function (blob) {
+              if (!blob) {
+                return;
+              }
+              triggerDownload(blob, safeFilenameBase(seed) + '.png');
+            }, 'image/png');
+          };
+
+          img.onerror = function () {
+            window.alert('Could not export PNG in this browser. Try Download SVG instead.');
+          };
+
+          img.src = uri;
+        });
 
         function stopIntro() {
           introCancelled = true;
