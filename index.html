@@ -8,36 +8,76 @@
       name="description"
         content="Framework-agnostic static SVG monster avatar generator with deterministic seeded characters."
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=VT323&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
-        --bg: #f3f1ea;
-        --panel: #e6e1d5;
-        --ink: #171717;
-        --muted: #5f5a52;
-        --line: #171717;
-        --code-bg: #111111;
-        --code-text: #f3f1ea;
-        --code-muted: #bcb5a7;
-        --code-keyword: #f59e0b;
-        --code-string: #86efac;
-        --code-fn: #93c5fd;
-        --code-prop: #fca5a5;
+        --bg: #f4efe2;
+        --bg-accent: #e4d7bd;
+        --panel: rgba(249, 244, 231, 0.88);
+        --panel-strong: #efe4c8;
+        --ink: #16120e;
+        --muted: #64594d;
+        --line: #16120e;
+        --accent: #2f7a51;
+        --accent-strong: #174e31;
+        --alert: #c68420;
+        --shadow: 8px 8px 0 rgba(22, 18, 14, 0.14);
+        --code-bg: #171512;
+        --code-text: #f3ead7;
+        --code-muted: #c9bda3;
+        --code-keyword: #f4b247;
+        --code-string: #9fe3a3;
+        --code-fn: #8fc4ff;
+        --code-prop: #ffb3a2;
       }
 
       * {
         box-sizing: border-box;
       }
 
-      html {
-        background: var(--bg);
+      html,
+      body {
+        min-height: 100%;
       }
 
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: "IBM Plex Mono", monospace;
         color: var(--ink);
-        background: var(--bg);
+        background:
+          radial-gradient(circle at top, rgba(255, 247, 219, 0.95), transparent 30%),
+          linear-gradient(180deg, rgba(228, 215, 189, 0.7), transparent 40%),
+          var(--bg);
+        position: relative;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      body::before {
+        background-image:
+          linear-gradient(rgba(22, 18, 14, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(22, 18, 14, 0.04) 1px, transparent 1px);
+        background-size: 22px 22px;
+        opacity: 0.55;
+      }
+
+      body::after {
+        background:
+          radial-gradient(circle at 20% 20%, rgba(47, 122, 81, 0.1), transparent 18%),
+          radial-gradient(circle at 80% 12%, rgba(198, 132, 32, 0.1), transparent 18%),
+          radial-gradient(circle at 70% 80%, rgba(47, 122, 81, 0.08), transparent 16%);
       }
 
       a {
@@ -45,27 +85,15 @@
       }
 
       .page {
-        width: min(720px, calc(100% - 32px));
+        width: min(1120px, calc(100% - 32px));
         margin: 0 auto;
-        padding: 24px 0 48px;
+        padding: 24px 0 56px;
+        position: relative;
+        z-index: 1;
       }
 
       .section {
-        padding: 24px 0;
-        border-top: 2px solid var(--line);
-      }
-
-      .section:first-child {
-        border-top: 0;
-        padding-top: 8px;
-      }
-
-      .label {
-        margin: 0 0 12px;
-        font-size: 12px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
+        padding: 28px 0;
       }
 
       h1,
@@ -74,39 +102,125 @@
         margin: 0;
       }
 
-      h1 {
-        font-size: clamp(36px, 9vw, 64px);
-        line-height: 0.92;
-        letter-spacing: -0.06em;
+      .label {
+        margin: 0;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
         text-transform: uppercase;
+        color: var(--accent-strong);
+      }
+
+      h1 {
+        font-family: "VT323", monospace;
+        font-size: clamp(64px, 15vw, 124px);
+        line-height: 0.86;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        text-align: center;
+        text-shadow: 4px 4px 0 rgba(22, 18, 14, 0.1);
       }
 
       h2 {
-        font-size: 22px;
-        line-height: 1;
-        letter-spacing: -0.04em;
+        font-family: "VT323", monospace;
+        font-size: clamp(34px, 5vw, 50px);
+        line-height: 0.95;
+        letter-spacing: 0.03em;
         text-transform: uppercase;
+        text-align: center;
       }
 
-      .intro {
+      .hero-shell {
+        display: grid;
+        gap: 24px;
+        place-items: center;
+        padding: 22px 14px 18px;
+        border: 3px solid var(--line);
+        background:
+          linear-gradient(180deg, rgba(255, 248, 229, 0.84), rgba(241, 232, 212, 0.98)),
+          var(--panel);
+        box-shadow: var(--shadow);
+        text-align: center;
+        overflow: visible;
+        position: relative;
+      }
+
+      .hero-shell::before {
+        content: "PIXEL LAB";
+        position: absolute;
+        top: 10px;
+        left: 14px;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        color: rgba(22, 18, 14, 0.5);
+      }
+
+      .hero-copy {
+        display: grid;
+        gap: 10px;
+        justify-items: center;
+        max-width: 60rem;
+      }
+
+      .hero-subtitle {
+        max-width: 44rem;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .hero-grid {
         display: grid;
         gap: 18px;
+        width: 100%;
+        align-items: stretch;
       }
 
-      .hero {
+      .avatar-panel,
+      .controls-panel,
+      .examples-panel {
+      }
+
+      .avatar-panel {
+        padding: 8px 8px 0;
         display: grid;
-        justify-items: start;
-        gap: 16px;
+        gap: 10px;
+      }
+
+      .avatar-meta,
+      .control-meta,
+      .examples-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .pixel-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .pixel-status::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        background: var(--accent);
+        box-shadow: 2px 2px 0 rgba(22, 18, 14, 0.18);
       }
 
       .avatar-stage {
-        width: min(100%, 320px);
+        width: min(100%, 380px);
         aspect-ratio: 1;
+        margin: 0 auto;
         display: grid;
         place-items: center;
-        padding: 16px;
-        background: var(--panel);
-        border: 2px solid var(--line);
+        border: 3px solid var(--line);
       }
 
       .avatar-stage svg,
@@ -114,17 +228,32 @@
         width: 100%;
         height: 100%;
         display: block;
+        image-rendering: pixelated;
       }
 
-      .controls {
-        width: min(100%, 320px);
+      .controls-panel {
+        padding: 8px 8px 0;
         display: grid;
         gap: 10px;
       }
 
-      .input-row,
-      .button-row {
+      .controls {
         display: grid;
+        gap: 14px;
+        text-align: left;
+        align-content: start;
+        max-height: 200px;
+        overflow-y: auto;
+        padding-right: 4px;
+      }
+
+      .input-row,
+      .footer {
+        display: grid;
+        gap: 10px;
+      }
+
+      .input-row {
         grid-template-columns: 1fr auto;
         gap: 10px;
       }
@@ -146,14 +275,16 @@
       input {
         width: 100%;
         min-width: 0;
-        padding: 12px 14px;
-        border: 2px solid var(--line);
-        background: #fffdf7;
+        padding: 10px 12px;
+        border: 3px solid var(--line);
+        background: #fffbee;
         outline: none;
+        font-size: 14px;
+        line-height: 1.2;
       }
 
       input:focus {
-        box-shadow: inset 0 0 0 2px var(--line);
+        box-shadow: inset 0 0 0 2px var(--alert);
       }
 
       button,
@@ -161,36 +292,122 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 12px 14px;
-        border: 2px solid var(--line);
-        background: var(--panel);
+        gap: 10px;
+        padding: 10px 14px;
+        border: 3px solid var(--line);
+        background: var(--panel-strong);
         text-decoration: none;
         cursor: pointer;
+        transition: transform 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+        line-height: 1.2;
       }
 
       button:hover,
-      .button-link:hover {
-        background: #ddd5c4;
+      button:focus-visible,
+      .button-link:hover,
+      .button-link:focus-visible {
+        background: #e8d8af;
+        transform: translate(-2px, -2px);
+        box-shadow: 4px 4px 0 rgba(22, 18, 14, 0.18);
+      }
+
+      .toggle-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 14px;
+        border: 3px solid var(--line);
+        background: rgba(255, 251, 238, 0.75);
+      }
+
+      .toggle-copy {
+        display: grid;
+        gap: 4px;
+      }
+
+      .toggle-copy strong {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .toggle-copy span {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .switch input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .switch-ui {
+        width: 62px;
+        height: 34px;
+        border: 3px solid var(--line);
+        background: #eadcb8;
+        display: inline-flex;
+        align-items: center;
+        padding: 3px;
+      }
+
+      .switch-ui::after {
+        content: "";
+        width: 20px;
+        height: 20px;
+        background: var(--line);
+        transition: transform 180ms ease;
+      }
+
+      .switch input:checked + .switch-ui {
+        background: #9dc7a9;
+      }
+
+      .switch input:checked + .switch-ui::after {
+        transform: translateX(28px);
+      }
+
+      .switch input:focus-visible + .switch-ui {
+        box-shadow: 0 0 0 2px var(--alert);
       }
 
       .description,
       .tiny {
-        max-width: 48ch;
         color: var(--muted);
-        line-height: 1.55;
+        line-height: 1.75;
       }
 
-      .examples {
+      .description {
+        max-width: 42ch;
+      }
+
+      .examples-panel {
+        padding: 20px;
         display: grid;
-        gap: 14px;
-        margin-top: 16px;
+        gap: 18px;
+      }
+
+      .examples-copy {
+        display: grid;
+        gap: 10px;
+        justify-items: center;
+        text-align: center;
       }
 
       pre {
         margin: 0;
         overflow: auto;
         padding: 16px;
-        border: 2px solid var(--line);
+        border: 3px solid var(--line);
         background: var(--code-bg);
         color: var(--code-text);
         line-height: 1.6;
@@ -223,64 +440,138 @@
       }
 
       .footer {
-        display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-top: 20px;
+      }
+
+      .donate-link {
+        background: #f2cf6b;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .coin-icon {
+        width: 16px;
+        height: 16px;
+        flex: 0 0 auto;
+      }
+
+      @media (min-width: 840px) {
+        .page {
+          padding-top: 36px;
+        }
+
+        .hero-shell {
+          padding: 28px 28px 22px;
+        }
+
+        .hero-grid {
+          grid-template-columns: minmax(320px, 1fr) minmax(320px, 0.9fr);
+          gap: 24px;
+        }
+
+        .avatar-panel,
+        .controls-panel {
+          min-height: 100%;
+        }
+
+        .examples-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 16px;
+        }
       }
 
       @media (max-width: 560px) {
         .page {
-          width: min(100% - 20px, 720px);
+          width: min(100% - 20px, 1120px);
         }
 
-        .input-row,
-        .button-row,
         .footer {
-          grid-template-columns: 1fr;
-          display: grid;
+          justify-items: center;
+          text-align: center;
         }
 
-        .avatar-stage,
+        .input-row {
+          grid-template-columns: 1fr;
+        }
+
         .controls {
+          max-height: none;
+          overflow: visible;
+          padding-right: 0;
+        }
+
+        .toggle-card {
+          align-items: start;
+        }
+
+        .avatar-stage {
           width: 100%;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          transition-duration: 1ms !important;
         }
       }
     </style>
   </head>
   <body>
     <main class="page">
-      <section class="section intro">
-        <p class="label">Zero dependency · deterministic · inline SVG</p>
-        <h1>Pixeloids</h1>
+      <section class="section hero-shell">
+        <div class="hero-copy">
+          <p class="label">Zero dependency · deterministic · inline SVG</p>
+          <h1>Pixeloids</h1>
+          <p class="hero-subtitle">
+            Sharp little monster avatars for static sites, scripts, prototypes, and anywhere else a seed should always resolve to the exact same creature.
+          </p>
+        </div>
 
-        <div class="hero">
-          <div class="avatar-stage" id="avatar-preview" aria-live="polite"></div>
+        <div class="hero-grid">
+          <div class="avatar-panel">
+            <div class="avatar-stage" id="avatar-preview" aria-live="polite"></div>
+          </div>
 
-          <div class="controls">
-            <label class="label" for="seed-input">Seed</label>
-            <div class="input-row">
-              <input id="seed-input" type="text" value="ada-lovelace" autocomplete="off" spellcheck="false" />
-              <button id="randomize-button" type="button">Random</button>
+          <div class="controls-panel">
+            <div class="controls">
+              <label class="label" for="seed-input">Seed</label>
+              <div class="input-row">
+                <input id="seed-input" type="text" value="" autocomplete="off" spellcheck="false" />
+                <button id="randomize-button" type="button">Randomize</button>
+              </div>
+
+              <div class="toggle-card">
+                <div class="toggle-copy">
+                  <strong>Background</strong>
+                  <span>Toggle the container backdrop on or off without changing the creature itself.</span>
+                </div>
+                <label class="switch" for="background-toggle">
+                  <input id="background-toggle" type="checkbox" checked />
+                  <span class="switch-ui" aria-hidden="true"></span>
+                </label>
+              </div>
             </div>
-            <p class="description">
-               Tiny framework-agnostic avatar generator for sharp, blocky monster characters. Same seed, same creature.
-            </p>
           </div>
         </div>
       </section>
 
       <section class="section" id="examples">
-        <p class="label">Examples</p>
-          <h2>Use anywhere</h2>
-          <p class="description" style="margin-top: 12px;">
-          The API stays DOM-free: generate deterministic monster SVG strings in static pages, scripts, SSR, or any app that can render a string.
-          </p>
+        <div class="examples-panel">
+          <div class="examples-copy">
+            <p class="label">Examples</p>
+            <h2>Use anywhere</h2>
+            <p class="description">
+              Generate deterministic monster SVG strings in static pages, scripts, SSR, or any app that can render a string.
+            </p>
+          </div>
 
-        <div class="examples">
-          <pre><code><span class="token-punctuation">&lt;</span><span class="token-property">script</span> <span class="token-property">src</span><span class="token-punctuation">=</span><span class="token-string">"./pixeloids.js"</span><span class="token-punctuation">&gt;&lt;/</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span>
+          <div class="examples-grid">
+            <pre><code><span class="token-punctuation">&lt;</span><span class="token-property">script</span> <span class="token-property">src</span><span class="token-punctuation">=</span><span class="token-string">"./pixeloids.js"</span><span class="token-punctuation">&gt;&lt;/</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span>
 <span class="token-punctuation">&lt;</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span>
   <span class="token-keyword">const</span> svg <span class="token-punctuation">=</span> Pixeloids<span class="token-punctuation">.</span><span class="token-function">createSvg</span><span class="token-punctuation">(</span><span class="token-string">'demo-seed'</span><span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
     <span class="token-property">size</span><span class="token-punctuation">:</span> 160<span class="token-punctuation">,</span>
@@ -290,7 +581,7 @@
   document<span class="token-punctuation">.</span><span class="token-function">querySelector</span><span class="token-punctuation">(</span><span class="token-string">'#slot'</span><span class="token-punctuation">)</span><span class="token-punctuation">.</span>innerHTML <span class="token-punctuation">=</span> svg<span class="token-punctuation">;</span>
 <span class="token-punctuation">&lt;/</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span></code></pre>
 
-          <pre><code><span class="token-keyword">const</span> Pixeloids <span class="token-punctuation">=</span> <span class="token-function">require</span><span class="token-punctuation">(</span><span class="token-string">'./pixeloids.js'</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
+            <pre><code><span class="token-keyword">const</span> Pixeloids <span class="token-punctuation">=</span> <span class="token-function">require</span><span class="token-punctuation">(</span><span class="token-string">'./pixeloids.js'</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
 
 <span class="token-keyword">const</span> avatar <span class="token-punctuation">=</span> Pixeloids<span class="token-punctuation">.</span><span class="token-function">createAvatar</span><span class="token-punctuation">(</span><span class="token-string">'ops-bot'</span><span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
   <span class="token-property">size</span><span class="token-punctuation">:</span> 128<span class="token-punctuation">,</span>
@@ -299,13 +590,24 @@
 
 console<span class="token-punctuation">.</span><span class="token-function">log</span><span class="token-punctuation">(</span>avatar<span class="token-punctuation">.</span>svg<span class="token-punctuation">)</span><span class="token-punctuation">;</span>
 console<span class="token-punctuation">.</span><span class="token-function">log</span><span class="token-punctuation">(</span>avatar<span class="token-punctuation">.</span>metadata<span class="token-punctuation">)</span><span class="token-punctuation">;</span></code></pre>
-        </div>
+          </div>
 
-        <div class="footer">
-          <p class="tiny">
-            API: <code>createSvg</code> · <code>getMetadata</code> · <code>createAvatar</code> · <code>toDataUri</code>
-          </p>
-          <a class="button-link" href="#">Donate</a>
+          <div class="footer">
+            <p class="tiny">
+              API: <code>createSvg</code> · <code>getMetadata</code> · <code>createAvatar</code> · <code>toDataUri</code>
+            </p>
+            <a class="button-link donate-link" href="#">
+              <svg class="coin-icon" viewBox="0 0 16 16" aria-hidden="true">
+                <rect x="4" y="1" width="8" height="2" fill="#16120e"></rect>
+                <rect x="2" y="3" width="12" height="2" fill="#16120e"></rect>
+                <rect x="1" y="5" width="14" height="6" fill="#f3b63f"></rect>
+                <rect x="2" y="11" width="12" height="2" fill="#d69424"></rect>
+                <rect x="4" y="13" width="8" height="2" fill="#16120e"></rect>
+                <rect x="7" y="6" width="2" height="4" fill="#16120e"></rect>
+              </svg>
+              Donate
+            </a>
+          </div>
         </div>
       </section>
     </main>
@@ -316,28 +618,102 @@ console<span class="token-punctuation">.</span><span class="token-function">log<
         var seedInput = document.getElementById('seed-input');
         var preview = document.getElementById('avatar-preview');
         var randomizeButton = document.getElementById('randomize-button');
+        var backgroundToggle = document.getElementById('background-toggle');
+        var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var introTimeouts = [];
+        var introCancelled = false;
+        var initialSeed = randomSeed();
 
         function randomSeed() {
           var parts = ['gob', 'moss', 'zap', 'blob', 'sprout', 'fang', 'bloop', 'glitch'];
           return parts[Math.floor(Math.random() * parts.length)] + '-' + Math.floor(Math.random() * 9999);
         }
 
-        function render(seed) {
-          preview.innerHTML = Pixeloids.createSvg(seed, { size: 288, background: true });
+        function clearIntroAnimation() {
+          while (introTimeouts.length) {
+            window.clearTimeout(introTimeouts.pop());
+          }
+        }
+
+        function render(seed, includeBackground, isBooting) {
+          var safeSeed = seed || 'pixeloid';
+          preview.innerHTML = Pixeloids.createSvg(safeSeed, { size: 320, background: includeBackground });
+        }
+
+        function currentBackground() {
+          return backgroundToggle.checked;
+        }
+
+        function stopIntro() {
+          introCancelled = true;
+          clearIntroAnimation();
+        }
+
+        function animateIntro(finalSeed) {
+          var frames = 11;
+          var totalDuration = 2100;
+          var elapsed = 0;
+          var previousTime = 0;
+          var includeBackground = currentBackground();
+          var i;
+
+          introCancelled = false;
+          clearIntroAnimation();
+
+          for (i = 0; i < frames; i += 1) {
+            (function (index) {
+              var progress = (index + 1) / frames;
+              var eased = Math.pow(progress, 2.45);
+              var time = Math.round(eased * totalDuration);
+              var delay = Math.max(60, time - previousTime);
+              elapsed += delay;
+              previousTime = time;
+
+              introTimeouts.push(window.setTimeout(function () {
+                if (introCancelled) {
+                  return;
+                }
+
+                render(randomSeed(), includeBackground, true);
+              }, elapsed));
+            })(i);
+          }
+
+          introTimeouts.push(window.setTimeout(function () {
+            if (introCancelled) {
+              return;
+            }
+
+            seedInput.value = finalSeed;
+            render(finalSeed, currentBackground(), false);
+          }, totalDuration + 120));
         }
 
         seedInput.addEventListener('input', function (event) {
-          render(event.target.value || 'pixeloid');
+          stopIntro();
+          render(event.target.value || 'pixeloid', currentBackground(), false);
+        });
+
+        backgroundToggle.addEventListener('change', function () {
+          stopIntro();
+          render(seedInput.value || 'pixeloid', currentBackground(), false);
         });
 
         randomizeButton.addEventListener('click', function () {
+          stopIntro();
           seedInput.value = randomSeed();
-          render(seedInput.value);
+          render(seedInput.value, currentBackground(), false);
           seedInput.focus();
           seedInput.select();
         });
 
-        render(seedInput.value);
+        seedInput.value = initialSeed;
+
+        if (reducedMotion) {
+          render(initialSeed, currentBackground(), false);
+        } else {
+          animateIntro(initialSeed);
+        }
       })();
     </script>
   </body>
