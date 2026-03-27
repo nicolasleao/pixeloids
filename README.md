@@ -1,11 +1,28 @@
 # Pixeloids
 
+![Animated demo: cycle of procedural Pixeloids avatars](assets/pixeloids-demo.gif)
+
 Static, framework-agnostic SVG avatar generator for minimal quirky monster characters.
 
-## Files
+## Install
 
-- `pixeloids.js` — zero-dependency library file
-- `index.html` — single-page demo and live previewer
+Until the package is on the npm registry, install from GitHub:
+
+```bash
+npm install github:nicolasleao/pixeloids
+```
+
+## Usage (Node)
+
+```js
+const Pixeloids = require('pixeloids');
+
+const svg = Pixeloids.createSvg('demo-seed', { size: 160 });
+const avatar = Pixeloids.createAvatar('demo-seed');
+
+console.log(avatar.svg);
+console.log(avatar.metadata);
+```
 
 ## Browser
 
@@ -16,12 +33,16 @@ Static, framework-agnostic SVG avatar generator for minimal quirky monster chara
 </script>
 ```
 
-## CommonJS
+If you are working from a clone without installing it as a dependency, use `require('./pixeloids.js')` instead.
 
-```js
-const Pixeloids = require('./pixeloids.js');
-const avatar = Pixeloids.createAvatar('demo-seed');
-```
+## Files
+
+- `pixeloids.js` — zero-dependency library file (this is what the installable package contains)
+
+### Repository files
+- `assets/style.css` — demo page styles
+- `assets/pixeloids-demo.gif` — README preview (regenerate with `npm run generate:readme-gif`)
+- `index.html` — single-page demo and live previewer
 
 ## API
 
