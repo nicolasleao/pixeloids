@@ -1,10 +1,10 @@
 # Pixeloids
 Procedural SVG avatar generator for minimal quirky monster characters.
 
-### variant: monster
+### variant: monster (940,584,960 combinations)
 ![monster](assets/pixeloids-monster-demo.gif)
 
-### variant: minimal
+### variant: minimal (116,640 combinations)
 ![minimal](assets/pixeloids-minimal-demo.gif)
 
 

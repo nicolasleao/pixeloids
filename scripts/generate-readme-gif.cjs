@@ -29,8 +29,8 @@ const SEEDS = [
   'blob-6000'
 ];
 
-const FRAME_SIZE = 320;
-const FRAME_DELAY_MS = 450;
+const FRAME_SIZE = 640;
+const FRAME_DELAY_MS = 900;
 const OUTPUTS = [
   {
     variant: 'monster',

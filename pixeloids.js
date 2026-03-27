@@ -693,22 +693,44 @@
   }
   function buildMinimalFace(faceStyle, faceColor, accentColor) {
     var parts = [];
+    var anchor = {
+      leftX: 6 + faceStyle.faceXShift,
+      rightX: 13 + faceStyle.faceXShift,
+      eyeY: 7 + faceStyle.eyeYShift,
+      mouthX: 9 + faceStyle.faceXShift,
+      mouthY: 12 + faceStyle.mouthYShift,
+      winkSide: faceStyle.winkSide
+    };
+
     drawFaceParts(
       parts,
-      {
-        leftX: 6,
-        rightX: 13,
-        eyeY: 7,
-        mouthX: 9,
-        mouthY: 12,
-        winkSide: faceStyle.winkSide
-      },
+      anchor,
       faceStyle,
       { ink: faceColor, white: MINIMAL_FEATURE_LIGHT, accent: accentColor },
       function (target, x, y, w, h, fill) {
         target.push(cellRect(x, y, w, h, fill));
       }
     );
+
+    // Keep minimal style, but add subtle trait richness borrowed from monster.
+    if (faceStyle.cheekStyle === 'dots') {
+      parts.push(cellRect(anchor.leftX - 1, anchor.mouthY, 1, 1, accentColor));
+      parts.push(cellRect(anchor.rightX + 1, anchor.mouthY, 1, 1, accentColor));
+    } else if (faceStyle.cheekStyle === 'bars') {
+      parts.push(cellRect(anchor.leftX - 1, anchor.eyeY + 1, 1, 2, accentColor));
+      parts.push(cellRect(anchor.rightX + 1, anchor.eyeY + 1, 1, 2, accentColor));
+    }
+
+    if (faceStyle.browStyle === 'flat') {
+      parts.push(cellRect(anchor.leftX - 1, anchor.eyeY - 1, 2, 1, faceColor));
+      parts.push(cellRect(anchor.rightX, anchor.eyeY - 1, 2, 1, faceColor));
+    } else if (faceStyle.browStyle === 'angry') {
+      parts.push(cellRect(anchor.leftX - 1, anchor.eyeY - 1, 1, 1, faceColor));
+      parts.push(cellRect(anchor.leftX, anchor.eyeY - 2, 1, 1, faceColor));
+      parts.push(cellRect(anchor.rightX + 1, anchor.eyeY - 1, 1, 1, faceColor));
+      parts.push(cellRect(anchor.rightX, anchor.eyeY - 2, 1, 1, faceColor));
+    }
+
     return parts.join('');
   }
 
@@ -743,7 +765,12 @@
     var faceStyle = {
       eyes: SHARED_EYE_SHAPES[(hash >>> 12) % SHARED_EYE_SHAPES.length],
       mouth: SHARED_MOUTH_SHAPES[(hash >>> 16) % SHARED_MOUTH_SHAPES.length],
-      winkSide: ((hash >>> 20) & 1) === 1 ? 'right' : 'left'
+      winkSide: ((hash >>> 20) & 1) === 1 ? 'right' : 'left',
+      cheekStyle: ['none', 'dots', 'bars'][(hash >>> 21) % 3],
+      browStyle: ['none', 'flat', 'angry'][(hash >>> 23) % 3],
+      faceXShift: [-1, 0, 1][(hash >>> 25) % 3],
+      eyeYShift: [0, 1][(hash >>> 27) % 2],
+      mouthYShift: [0, 1][(hash >>> 28) % 2]
     };
     var minimalColors = resolveMinimalColors(palette, faceStyle);
     var bg = minimalColors.background;
@@ -793,6 +820,11 @@
         faceEyes: faceStyle.eyes,
         faceMouth: faceStyle.mouth,
         winkSide: faceStyle.winkSide,
+        cheekStyle: faceStyle.cheekStyle,
+        browStyle: faceStyle.browStyle,
+        faceXShift: faceStyle.faceXShift,
+        eyeYShift: faceStyle.eyeYShift,
+        mouthYShift: faceStyle.mouthYShift,
         paletteIndex: PALETTES.indexOf(palette)
       },
       viewBox: '0 0 ' + VIEWBOX_SIZE + ' ' + VIEWBOX_SIZE
