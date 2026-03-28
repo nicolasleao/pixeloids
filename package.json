@@ -3,8 +3,23 @@
   "version": "0.5.0",
   "description": "Static, framework-agnostic SVG avatar generator for minimal quirky monster characters.",
   "main": "pixeloids.js",
+  "module": "pixeloids.mjs",
+  "exports": {
+    ".": {
+      "import": "./pixeloids.mjs",
+      "require": "./pixeloids.js",
+      "default": "./pixeloids.js"
+    },
+    "./pixeloids.js": "./pixeloids.js",
+    "./pixeloids.mjs": "./pixeloids.mjs",
+    "./animations.js": "./animations.js",
+    "./animations.mjs": "./animations.mjs"
+  },
   "files": [
-    "pixeloids.js"
+    "pixeloids.js",
+    "pixeloids.mjs",
+    "animations.js",
+    "animations.mjs"
   ],
   "scripts": {
     "generate:readme-gif": "node scripts/generate-readme-gif.cjs",

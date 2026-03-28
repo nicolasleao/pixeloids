@@ -3,9 +3,11 @@
   if (typeof module === 'object' && module.exports) {
     module.exports = api;
     module.exports.default = api;
-  } else if (root) {
-    root.Pixeloids = api;
   }
+  if (typeof define === 'function' && define.amd) {
+    define(function () { return api; });
+  }
+  if (root) { root.Pixeloids = api; }
 })(typeof globalThis !== 'undefined' ? globalThis : typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
@@ -334,69 +336,82 @@
     return parts.join('');
   }
 
-  function drawFaceParts(parts, anchor, faceStyle, colors, addRect) {
+  function groupMarkup(className, content, attrs) {
+    if (!content) {
+      return '';
+    }
+    return '<g class="' + className + '"' + (attrs || '') + '>' + content + '</g>';
+  }
+
+  function buildEyeMarkup(faceStyle, anchor, colors, side) {
+    var x = side === 'left' ? anchor.leftX : anchor.rightX;
+    var parts = [];
+
     if (faceStyle.eyes === 'dots') {
-      addRect(parts, anchor.leftX, anchor.eyeY, 1, 1, colors.ink);
-      addRect(parts, anchor.rightX, anchor.eyeY, 1, 1, colors.ink);
+      addPart(parts, x, anchor.eyeY, 1, 1, colors.ink);
     } else if (faceStyle.eyes === 'wide') {
-      addRect(parts, anchor.leftX, anchor.eyeY, 2, 1, colors.white);
-      addRect(parts, anchor.rightX - 1, anchor.eyeY, 2, 1, colors.white);
-      addRect(parts, anchor.leftX, anchor.eyeY, 1, 1, colors.ink);
-      addRect(parts, anchor.rightX, anchor.eyeY, 1, 1, colors.ink);
+      addPart(parts, side === 'left' ? x : x - 1, anchor.eyeY, 2, 1, colors.white);
+      addPart(parts, x, anchor.eyeY, 1, 1, colors.ink);
     } else if (faceStyle.eyes === 'blink') {
-      addRect(parts, anchor.leftX, anchor.eyeY, 2, 1, colors.ink);
-      addRect(parts, anchor.rightX - 1, anchor.eyeY, 2, 1, colors.ink);
+      addPart(parts, side === 'left' ? x : x - 1, anchor.eyeY, 2, 1, colors.ink);
     } else if (faceStyle.eyes === 'wink') {
-      if (anchor.winkSide === 'right') {
-        addRect(parts, anchor.leftX, anchor.eyeY, 1, 1, colors.ink);
-        addRect(parts, anchor.rightX - 1, anchor.eyeY, 2, 1, colors.ink);
+      if ((anchor.winkSide === 'right' && side === 'right') || (anchor.winkSide === 'left' && side === 'left')) {
+        addPart(parts, side === 'left' ? x : x - 1, anchor.eyeY, 2, 1, colors.ink);
       } else {
-        addRect(parts, anchor.leftX, anchor.eyeY, 2, 1, colors.ink);
-        addRect(parts, anchor.rightX, anchor.eyeY, 1, 1, colors.ink);
+        addPart(parts, x, anchor.eyeY, 1, 2, colors.white);
+        addPart(parts, x, anchor.eyeY, 1, 1, colors.ink);
       }
     } else {
-      addRect(parts, anchor.leftX, anchor.eyeY, 1, 2, colors.white);
-      addRect(parts, anchor.rightX, anchor.eyeY, 1, 2, colors.white);
-      addRect(parts, anchor.leftX, anchor.eyeY, 1, 1, colors.ink);
-      addRect(parts, anchor.rightX, anchor.eyeY, 1, 1, colors.ink);
+      addPart(parts, x, anchor.eyeY, 1, 2, colors.white);
+      addPart(parts, x, anchor.eyeY, 1, 1, colors.ink);
     }
 
+    return groupMarkup('pixeloids-eye pixeloids-eye-' + side, parts.join(''));
+  }
+
+  function buildMouthMarkup(faceStyle, anchor, colors) {
+    var parts = [];
+
     if (faceStyle.mouth === 'smile') {
-      addRect(parts, anchor.mouthX - 1, anchor.mouthY, 4, 1, colors.ink);
-      addRect(parts, anchor.mouthX - 1, anchor.mouthY - 1, 1, 1, colors.ink);
-      addRect(parts, anchor.mouthX + 2, anchor.mouthY - 1, 1, 1, colors.ink);
+      addPart(parts, anchor.mouthX - 1, anchor.mouthY, 4, 1, colors.ink);
+      addPart(parts, anchor.mouthX - 1, anchor.mouthY - 1, 1, 1, colors.ink);
+      addPart(parts, anchor.mouthX + 2, anchor.mouthY - 1, 1, 1, colors.ink);
     } else if (faceStyle.mouth === 'flat') {
-      addRect(parts, anchor.mouthX, anchor.mouthY, 2, 1, colors.ink);
+      addPart(parts, anchor.mouthX, anchor.mouthY, 2, 1, colors.ink);
     } else if (faceStyle.mouth === 'open') {
-      addRect(parts, anchor.mouthX, anchor.mouthY, 2, 2, colors.ink);
-      addRect(parts, anchor.mouthX, anchor.mouthY + 1, 2, 1, colors.accent);
+      addPart(parts, anchor.mouthX, anchor.mouthY, 2, 2, colors.ink);
+      addPart(parts, anchor.mouthX, anchor.mouthY + 1, 2, 1, colors.accent);
     } else if (faceStyle.mouth === 'grin') {
-      addRect(parts, anchor.mouthX - 1, anchor.mouthY, 4, 1, colors.ink);
-      addRect(parts, anchor.mouthX, anchor.mouthY, 1, 1, colors.white);
-      addRect(parts, anchor.mouthX + 1, anchor.mouthY, 1, 1, colors.white);
+      addPart(parts, anchor.mouthX - 1, anchor.mouthY, 4, 1, colors.ink);
+      addPart(parts, anchor.mouthX, anchor.mouthY, 1, 1, colors.white);
+      addPart(parts, anchor.mouthX + 1, anchor.mouthY, 1, 1, colors.white);
     } else {
-      addRect(parts, anchor.mouthX - 1, anchor.mouthY, 3, 1, colors.ink);
-      addRect(parts, anchor.mouthX + 1, anchor.mouthY - 1, 1, 1, colors.ink);
+      addPart(parts, anchor.mouthX - 1, anchor.mouthY, 3, 1, colors.ink);
+      addPart(parts, anchor.mouthX + 1, anchor.mouthY - 1, 1, 1, colors.ink);
     }
+
+    return groupMarkup('pixeloids-mouth pixeloids-mouth-' + faceStyle.mouth, parts.join(''));
   }
 
   function buildFace(traits, palette) {
-    var parts = [];
-    drawFaceParts(
-      parts,
-      {
-        leftX: traits.faceLeftX,
-        rightX: traits.faceRightX,
-        eyeY: traits.eyeY,
-        mouthX: traits.mouthX,
-        mouthY: traits.mouthY,
-        winkSide: traits.winkSide
-      },
-      traits.faceStyle,
-      { ink: palette.outline, white: '#ffffff', accent: palette.accent },
-      addPart
+    var anchor = {
+      leftX: traits.faceLeftX,
+      rightX: traits.faceRightX,
+      eyeY: traits.eyeY,
+      mouthX: traits.mouthX,
+      mouthY: traits.mouthY,
+      winkSide: traits.winkSide
+    };
+
+    return groupMarkup(
+      'pixeloids-face',
+      groupMarkup(
+        'pixeloids-face-eyes',
+        buildEyeMarkup(traits.faceStyle, anchor, { ink: palette.outline, white: '#ffffff', accent: palette.accent }, 'left') +
+          buildEyeMarkup(traits.faceStyle, anchor, { ink: palette.outline, white: '#ffffff', accent: palette.accent }, 'right')
+      ) +
+        buildMouthMarkup(traits.faceStyle, anchor, { ink: palette.outline, white: '#ffffff', accent: palette.accent })
     );
-    return parts.join('');
   }
 
   function buildLimbs(traits, palette) {
@@ -596,14 +611,15 @@
     var normalizedOptions = traits.options;
     var title = normalizedOptions.title || 'Pixeloid: ' + traits.seed;
     var offsetY = computeVerticalOffsetGrid(traits) * CELL;
-    var character =
-      '<g transform="translate(0,' + offsetY + ')">' +
-      buildBody(traits, traits.palette) +
-      buildHead(traits, traits.palette) +
-      buildTopper(traits, traits.palette) +
-      buildFace(traits, traits.palette) +
-      buildLimbs(traits, traits.palette) +
-      '</g>';
+    var character = groupMarkup(
+      'pixeloids-avatar pixeloids-variant-monster',
+      groupMarkup('pixeloids-body', buildBody(traits, traits.palette)) +
+        groupMarkup('pixeloids-head', buildHead(traits, traits.palette)) +
+        groupMarkup('pixeloids-topper', buildTopper(traits, traits.palette)) +
+        buildFace(traits, traits.palette) +
+        groupMarkup('pixeloids-limbs', buildLimbs(traits, traits.palette)),
+      ' transform="translate(0,' + offsetY + ')"'
+    );
 
     var svg =
       '' +
@@ -621,7 +637,7 @@
       '<title>' +
       escapeXml(title) +
       '</title>' +
-      buildBackground(traits, traits.palette, normalizedOptions) +
+      groupMarkup('pixeloids-background', buildBackground(traits, traits.palette, normalizedOptions)) +
       character +
       '</svg>';
 
@@ -692,7 +708,6 @@
     ];
   }
   function buildMinimalFace(faceStyle, faceColor, accentColor) {
-    var parts = [];
     var anchor = {
       leftX: 6 + faceStyle.faceXShift,
       rightX: 13 + faceStyle.faceXShift,
@@ -701,37 +716,48 @@
       mouthY: 12 + faceStyle.mouthYShift,
       winkSide: faceStyle.winkSide
     };
+    var colors = { ink: faceColor, white: MINIMAL_FEATURE_LIGHT, accent: accentColor };
+    var extras = '';
 
-    drawFaceParts(
-      parts,
-      anchor,
-      faceStyle,
-      { ink: faceColor, white: MINIMAL_FEATURE_LIGHT, accent: accentColor },
-      function (target, x, y, w, h, fill) {
-        target.push(cellRect(x, y, w, h, fill));
-      }
-    );
-
-    // Keep minimal style, but add subtle trait richness borrowed from monster.
     if (faceStyle.cheekStyle === 'dots') {
-      parts.push(cellRect(anchor.leftX - 1, anchor.mouthY, 1, 1, accentColor));
-      parts.push(cellRect(anchor.rightX + 1, anchor.mouthY, 1, 1, accentColor));
+      extras += groupMarkup(
+        'pixeloids-cheeks',
+        cellRect(anchor.leftX - 1, anchor.mouthY, 1, 1, accentColor) +
+          cellRect(anchor.rightX + 1, anchor.mouthY, 1, 1, accentColor)
+      );
     } else if (faceStyle.cheekStyle === 'bars') {
-      parts.push(cellRect(anchor.leftX - 1, anchor.eyeY + 1, 1, 2, accentColor));
-      parts.push(cellRect(anchor.rightX + 1, anchor.eyeY + 1, 1, 2, accentColor));
+      extras += groupMarkup(
+        'pixeloids-cheeks',
+        cellRect(anchor.leftX - 1, anchor.eyeY + 1, 1, 2, accentColor) +
+          cellRect(anchor.rightX + 1, anchor.eyeY + 1, 1, 2, accentColor)
+      );
     }
 
     if (faceStyle.browStyle === 'flat') {
-      parts.push(cellRect(anchor.leftX - 1, anchor.eyeY - 1, 2, 1, faceColor));
-      parts.push(cellRect(anchor.rightX, anchor.eyeY - 1, 2, 1, faceColor));
+      extras += groupMarkup(
+        'pixeloids-brows',
+        cellRect(anchor.leftX - 1, anchor.eyeY - 1, 2, 1, faceColor) +
+          cellRect(anchor.rightX, anchor.eyeY - 1, 2, 1, faceColor)
+      );
     } else if (faceStyle.browStyle === 'angry') {
-      parts.push(cellRect(anchor.leftX - 1, anchor.eyeY - 1, 1, 1, faceColor));
-      parts.push(cellRect(anchor.leftX, anchor.eyeY - 2, 1, 1, faceColor));
-      parts.push(cellRect(anchor.rightX + 1, anchor.eyeY - 1, 1, 1, faceColor));
-      parts.push(cellRect(anchor.rightX, anchor.eyeY - 2, 1, 1, faceColor));
+      extras += groupMarkup(
+        'pixeloids-brows',
+        cellRect(anchor.leftX - 1, anchor.eyeY - 1, 1, 1, faceColor) +
+          cellRect(anchor.leftX, anchor.eyeY - 2, 1, 1, faceColor) +
+          cellRect(anchor.rightX + 1, anchor.eyeY - 1, 1, 1, faceColor) +
+          cellRect(anchor.rightX, anchor.eyeY - 2, 1, 1, faceColor)
+      );
     }
 
-    return parts.join('');
+    return groupMarkup(
+      'pixeloids-face',
+      groupMarkup(
+        'pixeloids-face-eyes',
+        buildEyeMarkup(faceStyle, anchor, colors, 'left') + buildEyeMarkup(faceStyle, anchor, colors, 'right')
+      ) +
+        buildMouthMarkup(faceStyle, anchor, colors) +
+        extras
+    );
   }
 
   function minimalUsesWhiteFeatures(faceStyle) {
@@ -796,8 +822,8 @@
       '<title>' +
       escapeXml(title) +
       '</title>' +
-      bgSvg +
-      faceSvg +
+      groupMarkup('pixeloids-background', bgSvg) +
+      groupMarkup('pixeloids-avatar pixeloids-variant-minimal', faceSvg) +
       '</svg>';
 
     var metadata = {

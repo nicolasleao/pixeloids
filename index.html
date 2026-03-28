@@ -105,6 +105,17 @@
                   <span class="switch-ui" aria-hidden="true"></span>
                 </label>
               </div>
+
+              <div class="toggle-card">
+                <div class="toggle-copy">
+                  <strong>Idle animation</strong>
+                  <span>Seeded micro-motions like bobbing, blinking, looking around, and tiny sways.</span>
+                </div>
+                <label class="switch" for="animation-toggle">
+                  <input id="animation-toggle" type="checkbox" checked />
+                  <span class="switch-ui" aria-hidden="true"></span>
+                </label>
+              </div>
             </div>
 
             <div class="download-row" role="group" aria-label="Download avatar">
@@ -125,30 +136,64 @@
             </p>
           </div>
 
-          <div class="examples-grid">
-            <div class="code-card">
-              <div class="code-toolbar">
-                <span>React / Next.js</span>
-                <button class="copy-button" type="button" data-copy-target="example-react">Copy</button>
+          <div class="examples-mode-row">
+            <div class="toggle-card examples-toggle-card">
+              <div class="toggle-copy">
+                <strong>Animated</strong>
+                <span>Toggle all code snippets between static and animated usage.</span>
               </div>
-              <pre><code id="example-react"><span class="token-keyword">import</span> Pixeloids <span class="token-keyword">from</span> <span class="token-string">'pixeloids'</span><span class="token-punctuation">;</span>
+              <label class="switch" for="examples-animation-toggle">
+                <input id="examples-animation-toggle" type="checkbox" aria-label="Toggle animated examples">
+                <span class="switch-ui" aria-hidden="true"></span>
+              </label>
+            </div>
+            <p class="examples-mode-label" id="examples-mode-label">Animated: off</p>
+          </div>
+
+          <div class="examples-grid" id="examples-grid" data-example-mode="static">
+            <div class="code-card">
+              <div class="example-panel" data-example-mode="static">
+                <div class="code-toolbar">
+                  <span>React / Next.js — Static</span>
+                  <button class="copy-button" type="button" data-copy-target="example-react-static">Copy</button>
+                </div>
+                <pre><code id="example-react-static"><span class="token-keyword">import</span> <span class="token-punctuation">{</span> createSvg <span class="token-punctuation">}</span> <span class="token-keyword">from</span> <span class="token-string">'pixeloids'</span><span class="token-punctuation">;</span>
 
 <span class="token-keyword">export default function</span> <span class="token-function">Avatar</span><span class="token-punctuation">(</span><span class="token-punctuation">{</span> seed <span class="token-punctuation">}</span><span class="token-punctuation">)</span> <span class="token-punctuation">{</span>
-  <span class="token-keyword">const</span> svg <span class="token-punctuation">=</span> Pixeloids<span class="token-punctuation">.</span><span class="token-function">createSvg</span><span class="token-punctuation">(</span>seed<span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
+  <span class="token-keyword">const</span> svg <span class="token-punctuation">=</span> <span class="token-function">createSvg</span><span class="token-punctuation">(</span>seed<span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
     <span class="token-property">size</span><span class="token-punctuation">:</span> 128<span class="token-punctuation">,</span>
     <span class="token-property">background</span><span class="token-punctuation">:</span> <span class="token-keyword">true</span>
   <span class="token-punctuation">}</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
 
   <span class="token-keyword">return</span> <span class="token-punctuation">&lt;</span><span class="token-property">div</span> <span class="token-property">dangerouslySetInnerHTML</span><span class="token-punctuation">={</span><span class="token-punctuation">{</span> <span class="token-property">__html</span><span class="token-punctuation">:</span> svg <span class="token-punctuation">}</span><span class="token-punctuation">}</span> <span class="token-punctuation">/&gt;</span><span class="token-punctuation">;</span>
 <span class="token-punctuation">}</span></code></pre>
+              </div>
+              <div class="example-panel" data-example-mode="animated" hidden>
+                <div class="code-toolbar">
+                  <span>React / Next.js — Animated</span>
+                  <button class="copy-button" type="button" data-copy-target="example-react-animated">Copy</button>
+                </div>
+                <pre><code id="example-react-animated"><span class="token-keyword">import</span> PixeloidsAnimations <span class="token-keyword">from</span> <span class="token-string">'pixeloids/animations.mjs'</span><span class="token-punctuation">;</span>
+
+<span class="token-keyword">export default function</span> <span class="token-function">AnimatedAvatar</span><span class="token-punctuation">(</span><span class="token-punctuation">{</span> seed <span class="token-punctuation">}</span><span class="token-punctuation">)</span> <span class="token-punctuation">{</span>
+  <span class="token-keyword">const</span> svg <span class="token-punctuation">=</span> PixeloidsAnimations<span class="token-punctuation">.</span><span class="token-function">createAnimatedSvg</span><span class="token-punctuation">(</span>seed<span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
+    <span class="token-property">size</span><span class="token-punctuation">:</span> 128<span class="token-punctuation">,</span>
+    <span class="token-property">variant</span><span class="token-punctuation">:</span> <span class="token-string">'monster'</span><span class="token-punctuation">,</span>
+    <span class="token-property">background</span><span class="token-punctuation">:</span> <span class="token-keyword">true</span>
+  <span class="token-punctuation">}</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
+
+  <span class="token-keyword">return</span> <span class="token-punctuation">&lt;</span><span class="token-property">div</span> <span class="token-property">dangerouslySetInnerHTML</span><span class="token-punctuation">={</span><span class="token-punctuation">{</span> <span class="token-property">__html</span><span class="token-punctuation">:</span> svg <span class="token-punctuation">}</span><span class="token-punctuation">}</span> <span class="token-punctuation">/&gt;</span><span class="token-punctuation">;</span>
+<span class="token-punctuation">}</span></code></pre>
+              </div>
             </div>
 
             <div class="code-card">
-              <div class="code-toolbar">
-                <span>Browser</span>
-                <button class="copy-button" type="button" data-copy-target="example-browser">Copy</button>
-              </div>
-              <pre><code id="example-browser"><span class="token-punctuation">&lt;</span><span class="token-property">script</span> <span class="token-property">src</span><span class="token-punctuation">=</span><span class="token-string">"./pixeloids.js"</span><span class="token-punctuation">&gt;&lt;/</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span>
+              <div class="example-panel" data-example-mode="static">
+                <div class="code-toolbar">
+                  <span>Browser — Static</span>
+                  <button class="copy-button" type="button" data-copy-target="example-browser-static">Copy</button>
+                </div>
+                <pre><code id="example-browser-static"><span class="token-punctuation">&lt;</span><span class="token-property">script</span> <span class="token-property">src</span><span class="token-punctuation">=</span><span class="token-string">"./pixeloids.js"</span><span class="token-punctuation">&gt;&lt;/</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span>
 <span class="token-punctuation">&lt;</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span>
   <span class="token-keyword">const</span> svg <span class="token-punctuation">=</span> Pixeloids<span class="token-punctuation">.</span><span class="token-function">createSvg</span><span class="token-punctuation">(</span><span class="token-string">'demo-seed'</span><span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
     <span class="token-property">size</span><span class="token-punctuation">:</span> 160<span class="token-punctuation">,</span>
@@ -157,29 +202,61 @@
 
   document<span class="token-punctuation">.</span><span class="token-function">querySelector</span><span class="token-punctuation">(</span><span class="token-string">'#slot'</span><span class="token-punctuation">)</span><span class="token-punctuation">.</span>innerHTML <span class="token-punctuation">=</span> svg<span class="token-punctuation">;</span>
 <span class="token-punctuation">&lt;/</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span></code></pre>
+              </div>
+              <div class="example-panel" data-example-mode="animated" hidden>
+                <div class="code-toolbar">
+                  <span>Browser — Animated</span>
+                  <button class="copy-button" type="button" data-copy-target="example-browser-animated">Copy</button>
+                </div>
+                <pre><code id="example-browser-animated"><span class="token-punctuation">&lt;</span><span class="token-property">script</span> <span class="token-property">src</span><span class="token-punctuation">=</span><span class="token-string">"./pixeloids.js"</span><span class="token-punctuation">&gt;&lt;/</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span>
+<span class="token-punctuation">&lt;</span><span class="token-property">script</span> <span class="token-property">src</span><span class="token-punctuation">=</span><span class="token-string">"./animations.js"</span><span class="token-punctuation">&gt;&lt;/</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span>
+<span class="token-punctuation">&lt;</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span>
+  <span class="token-keyword">const</span> animatedSvg <span class="token-punctuation">=</span> PixeloidsAnimations<span class="token-punctuation">.</span><span class="token-function">createAnimatedSvg</span><span class="token-punctuation">(</span><span class="token-string">'demo-seed'</span><span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
+    <span class="token-property">size</span><span class="token-punctuation">:</span> 160<span class="token-punctuation">,</span>
+    <span class="token-property">variant</span><span class="token-punctuation">:</span> <span class="token-string">'minimal'</span><span class="token-punctuation">,</span>
+    <span class="token-property">background</span><span class="token-punctuation">:</span> <span class="token-keyword">true</span>
+  <span class="token-punctuation">}</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
+
+  document<span class="token-punctuation">.</span><span class="token-function">querySelector</span><span class="token-punctuation">(</span><span class="token-string">'#slot'</span><span class="token-punctuation">)</span><span class="token-punctuation">.</span>innerHTML <span class="token-punctuation">=</span> animatedSvg<span class="token-punctuation">;</span>
+<span class="token-punctuation">&lt;/</span><span class="token-property">script</span><span class="token-punctuation">&gt;</span></code></pre>
+              </div>
             </div>
 
             <div class="code-card">
-              <div class="code-toolbar">
-                <span>Node / CommonJS</span>
-                <button class="copy-button" type="button" data-copy-target="example-node">Copy</button>
-              </div>
-              <pre><code id="example-node"><span class="token-keyword">const</span> Pixeloids <span class="token-punctuation">=</span> <span class="token-function">require</span><span class="token-punctuation">(</span><span class="token-string">'pixeloids'</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
+              <div class="example-panel" data-example-mode="static">
+                <div class="code-toolbar">
+                  <span>Node / CommonJS — Static</span>
+                  <button class="copy-button" type="button" data-copy-target="example-node-static">Copy</button>
+                </div>
+                <pre><code id="example-node-static"><span class="token-keyword">const</span> Pixeloids <span class="token-punctuation">=</span> <span class="token-function">require</span><span class="token-punctuation">(</span><span class="token-string">'pixeloids'</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
 
 <span class="token-keyword">const</span> avatar <span class="token-punctuation">=</span> Pixeloids<span class="token-punctuation">.</span><span class="token-function">createAvatar</span><span class="token-punctuation">(</span><span class="token-string">'ops-bot'</span><span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
   <span class="token-property">size</span><span class="token-punctuation">:</span> 128<span class="token-punctuation">,</span>
   <span class="token-property">background</span><span class="token-punctuation">:</span> <span class="token-keyword">true</span>
+<span class="token-punctuation">}</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span></code></pre>
+              </div>
+              <div class="example-panel" data-example-mode="animated" hidden>
+                <div class="code-toolbar">
+                  <span>Node / CommonJS — Animated</span>
+                  <button class="copy-button" type="button" data-copy-target="example-node-animated">Copy</button>
+                </div>
+                <pre><code id="example-node-animated"><span class="token-keyword">const</span> PixeloidsAnimations <span class="token-punctuation">=</span> <span class="token-function">require</span><span class="token-punctuation">(</span><span class="token-string">'pixeloids/animations.js'</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
+
+<span class="token-keyword">const</span> animatedAvatar <span class="token-punctuation">=</span> PixeloidsAnimations<span class="token-punctuation">.</span><span class="token-function">createAnimatedAvatar</span><span class="token-punctuation">(</span><span class="token-string">'ops-bot'</span><span class="token-punctuation">,</span> <span class="token-punctuation">{</span>
+  <span class="token-property">size</span><span class="token-punctuation">:</span> 128<span class="token-punctuation">,</span>
+  <span class="token-property">variant</span><span class="token-punctuation">:</span> <span class="token-string">'monster'</span><span class="token-punctuation">,</span>
+  <span class="token-property">background</span><span class="token-punctuation">:</span> <span class="token-keyword">true</span>
 <span class="token-punctuation">}</span><span class="token-punctuation">)</span><span class="token-punctuation">;</span>
 
-<span class="token-comment">// avatar.seed     → 'ops-bot'</span>
-<span class="token-comment">// avatar.svg      → '&lt;svg …&gt;…&lt;/svg&gt;'</span>
-<span class="token-comment">// avatar.metadata → { variant, palette, colors, traits }</span></code></pre>
+<span class="token-comment">// animatedAvatar.metadata.avatar → base Pixeloids metadata</span>
+<span class="token-comment">// animatedAvatar.metadata.motion → { profile, vars }</span></code></pre>
+              </div>
             </div>
           </div>
 
           <div class="footer">
             <p class="tiny">
-              API: <code>createSvg</code> · <code>getMetadata</code> · <code>createAvatar</code> · <code>toDataUri</code>
+              API: <code>createSvg</code> · <code>getMetadata</code> · <code>createAvatar</code> · <code>toDataUri</code> · <code>createAnimatedSvg</code> · <code>createAnimatedAvatar</code> · <code>getAnimationMetadata</code>
             </p>
             <p class="donate-lead">Support my work</p>
             <button class="button-link donate-link" id="donate-button" type="button" aria-haspopup="dialog" aria-controls="donate-modal">
@@ -281,12 +358,14 @@
     </div>
 
     <script src="./pixeloids.js"></script>
+    <script src="./animations.js"></script>
     <script>
       (function () {
         var seedInput = document.getElementById('seed-input');
         var preview = document.getElementById('avatar-preview');
         var randomizeButton = document.getElementById('randomize-button');
         var backgroundToggle = document.getElementById('background-toggle');
+        var animationToggle = document.getElementById('animation-toggle');
         var downloadSvgButton = document.getElementById('download-svg-button');
         var downloadPngButton = document.getElementById('download-png-button');
         var variantInputs = document.querySelectorAll('input[name="variant"]');
@@ -295,6 +374,9 @@
         var donateModal = document.getElementById('donate-modal');
         var donateModalClose = document.getElementById('donate-modal-close');
         var walletCopyButtons = document.querySelectorAll('.copy-wallet-button');
+        var examplesAnimationToggle = document.getElementById('examples-animation-toggle');
+        var examplesGrid = document.getElementById('examples-grid');
+        var examplesModeLabel = document.getElementById('examples-mode-label');
         var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         var introTimeouts = [];
         var introCancelled = false;
@@ -314,11 +396,16 @@
 
         function render(seed, includeBackground, isBooting) {
           var safeSeed = seed || 'pixeloid';
-          preview.innerHTML = Pixeloids.createSvg(safeSeed, {
+          var options = {
             size: 320,
             background: includeBackground,
             variant: currentVariant()
-          });
+          };
+          if (animationToggle && animationToggle.checked && typeof PixeloidsAnimations !== 'undefined') {
+            preview.innerHTML = PixeloidsAnimations.createAnimatedSvg(safeSeed, options);
+          } else {
+            preview.innerHTML = Pixeloids.createSvg(safeSeed, options);
+          }
         }
 
         function currentBackground() {
@@ -354,22 +441,26 @@
         }
 
         downloadSvgButton.addEventListener('click', function () {
-          var svg = Pixeloids.createSvg(currentSeed(), {
+          var svgOptions = {
             size: EXPORT_SIZE,
             background: currentBackground(),
             variant: currentVariant()
-          });
+          };
+          var svg = animationToggle && animationToggle.checked && typeof PixeloidsAnimations !== 'undefined'
+            ? PixeloidsAnimations.createAnimatedSvg(currentSeed(), svgOptions)
+            : Pixeloids.createSvg(currentSeed(), svgOptions);
           var blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
           triggerDownload(blob, safeFilenameBase(currentSeed()) + '.svg');
         });
 
         downloadPngButton.addEventListener('click', function () {
           var seed = currentSeed();
-          var svg = Pixeloids.createSvg(seed, {
+          var svgOptions = {
             size: EXPORT_SIZE,
             background: currentBackground(),
             variant: currentVariant()
-          });
+          };
+          var svg = Pixeloids.createSvg(seed, svgOptions);
           var uri = Pixeloids.toDataUri(svg);
           var img = new Image();
 
@@ -452,6 +543,13 @@
           render(seedInput.value || 'pixeloid', currentBackground(), false);
         });
 
+        if (animationToggle) {
+          animationToggle.addEventListener('change', function () {
+            stopIntro();
+            render(seedInput.value || 'pixeloid', currentBackground(), false);
+          });
+        }
+
         Array.prototype.forEach.call(variantInputs, function (input) {
           input.addEventListener('change', function () {
             stopIntro();
@@ -485,6 +583,29 @@
           });
         });
 
+        function setExamplesMode(mode) {
+          var nextMode = mode === 'animated' ? 'animated' : 'static';
+          var panels = document.querySelectorAll('.example-panel');
+
+          if (examplesGrid) {
+            examplesGrid.setAttribute('data-example-mode', nextMode);
+          }
+
+          if (examplesModeLabel) {
+            examplesModeLabel.textContent = nextMode === 'animated' ? 'Animated: on' : 'Animated: off';
+          }
+
+          Array.prototype.forEach.call(panels, function (panel) {
+            panel.hidden = panel.getAttribute('data-example-mode') !== nextMode;
+          });
+        }
+
+        if (examplesAnimationToggle) {
+          examplesAnimationToggle.addEventListener('change', function () {
+            setExamplesMode(examplesAnimationToggle.checked ? 'animated' : 'static');
+          });
+        }
+
         function closeDonateModal() {
           if (!donateModal || donateModal.hidden) {
             return;
@@ -506,10 +627,14 @@
 
           var mascot = document.getElementById('donate-mascot');
           if (mascot && typeof Pixeloids !== 'undefined') {
-            mascot.innerHTML = Pixeloids.createSvg(randomSeed(), {
+            var mascotOptions = {
               size: 100,
-              background: false
-            });
+              background: false,
+              variant: currentVariant()
+            };
+            mascot.innerHTML = animationToggle && animationToggle.checked && typeof PixeloidsAnimations !== 'undefined'
+              ? PixeloidsAnimations.createAnimatedSvg(randomSeed(), mascotOptions)
+              : Pixeloids.createSvg(randomSeed(), mascotOptions);
           }
 
           donateModal.hidden = false;
@@ -559,6 +684,7 @@
         });
 
         seedInput.value = initialSeed;
+        setExamplesMode(examplesAnimationToggle && examplesAnimationToggle.checked ? 'animated' : 'static');
 
         if (reducedMotion) {
           render(initialSeed, currentBackground(), false);
