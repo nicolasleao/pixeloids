@@ -76,6 +76,56 @@
       detail: '#3f6212',
       topper: '#44551d',
       outline: '#1c2714'
+    },
+    {
+      name: 'lava-lamp',
+      background: '#ffe7d6',
+      body: '#ea580c',
+      head: '#fb923c',
+      accent: '#facc15',
+      detail: '#9a3412',
+      topper: '#7c2d12',
+      outline: '#2f1309'
+    },
+    {
+      name: 'berry-fizz',
+      background: '#fde7f3',
+      body: '#be185d',
+      head: '#f9a8d4',
+      accent: '#93c5fd',
+      detail: '#831843',
+      topper: '#701a75',
+      outline: '#2a1024'
+    },
+    {
+      name: 'cyber-lemon',
+      background: '#f7fee7',
+      body: '#4d7c0f',
+      head: '#a3e635',
+      accent: '#22d3ee',
+      detail: '#365314',
+      topper: '#14532d',
+      outline: '#132612'
+    },
+    {
+      name: 'starlight',
+      background: '#e0f2fe',
+      body: '#0284c7',
+      head: '#67e8f9',
+      accent: '#fda4af',
+      detail: '#075985',
+      topper: '#1e3a8a',
+      outline: '#0f1733'
+    },
+    {
+      name: 'peach-sorbet',
+      background: '#ffedd5',
+      body: '#f97316',
+      head: '#fdba74',
+      accent: '#fb7185',
+      detail: '#9a3412',
+      topper: '#7c3aed',
+      outline: '#31161a'
     }
   ];
 
@@ -328,6 +378,25 @@
     } else if (traits.topperStyle === 'tuft') {
       addPart(parts, x + 2, y - 1, w - 4, 1, palette.topper);
       addPart(parts, x + Math.floor(w / 2) - 1, y - 2, 2, 1, palette.topper);
+    } else if (traits.topperStyle === 'crown') {
+      addPart(parts, x + 1, y - 1, w - 2, 1, palette.topper);
+      addPart(parts, x + 1, y - 2, 1, 1, palette.accent);
+      addPart(parts, x + Math.floor(w / 2), y - 2, 1, 1, palette.accent);
+      addPart(parts, x + w - 2, y - 2, 1, 1, palette.accent);
+    } else if (traits.topperStyle === 'satellite') {
+      addPart(parts, x + Math.floor(w / 2), y - 1, 1, 1, palette.topper);
+      addPart(parts, x + Math.floor(w / 2), y - 2, 1, 1, palette.topper);
+      addPart(parts, x + Math.floor(w / 2) - 1, y - 2, 3, 1, palette.accent);
+      addPart(parts, x + Math.floor(w / 2) - 2, y - 1, 1, 1, palette.accent);
+      addPart(parts, x + Math.floor(w / 2) + 2, y - 1, 1, 1, palette.accent);
+    } else if (traits.topperStyle === 'mohawk') {
+      addPart(parts, x + Math.floor(w / 2) - 1, y - 2, 2, 2, palette.topper);
+      addPart(parts, x + Math.floor(w / 2) - 2, y - 1, 1, 1, palette.accent);
+      addPart(parts, x + Math.floor(w / 2) + 1, y - 1, 1, 1, palette.accent);
+    } else if (traits.topperStyle === 'puffs') {
+      addPart(parts, x + 1, y - 2, 2, 2, palette.topper);
+      addPart(parts, x + Math.floor(w / 2) - 1, y - 2, 2, 2, palette.accent);
+      addPart(parts, x + w - 3, y - 2, 2, 2, palette.topper);
     } else {
       addPart(parts, x + 1, y - 2, w - 2, 2, palette.topper);
       addPart(parts, x + 2, y, w - 4, 1, palette.topper);
@@ -543,7 +612,7 @@
       bodyY: bodyY,
       bodyWidth: bodyWidth,
       bodyHeight: bodyHeight,
-      topperStyle: pick(rng, ['none', 'horns', 'ears', 'antenna', 'sprout', 'tuft', 'cap']),
+      topperStyle: pick(rng, ['none', 'horns', 'ears', 'antenna', 'sprout', 'tuft', 'cap', 'crown', 'satellite', 'mohawk', 'puffs']),
       eyeStyle: eyeStyle,
       eyeY: eyeY,
       faceLeftX: faceLeftX,
