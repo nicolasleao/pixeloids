@@ -613,12 +613,15 @@
     var offsetY = computeVerticalOffsetGrid(traits) * CELL;
     var character = groupMarkup(
       'pixeloids-avatar pixeloids-variant-monster',
-      groupMarkup('pixeloids-body', buildBody(traits, traits.palette)) +
-        groupMarkup('pixeloids-head', buildHead(traits, traits.palette)) +
-        groupMarkup('pixeloids-topper', buildTopper(traits, traits.palette)) +
-        buildFace(traits, traits.palette) +
-        groupMarkup('pixeloids-limbs', buildLimbs(traits, traits.palette)),
-      ' transform="translate(0,' + offsetY + ')"'
+      groupMarkup(
+        'pixeloids-character',
+        groupMarkup('pixeloids-body', buildBody(traits, traits.palette)) +
+          groupMarkup('pixeloids-head', buildHead(traits, traits.palette)) +
+          groupMarkup('pixeloids-topper', buildTopper(traits, traits.palette)) +
+          buildFace(traits, traits.palette) +
+          groupMarkup('pixeloids-limbs', buildLimbs(traits, traits.palette)),
+        ' transform="translate(0,' + offsetY + ')"'
+      )
     );
 
     var svg =

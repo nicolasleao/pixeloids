@@ -74,7 +74,7 @@
 
   var STYLE_BLOCK = [
     '<style>',
-    '@keyframes pxa-bob{0%,100%{transform:translateY(var(--px-base-y,2.4px))}50%{transform:translateY(calc(var(--px-base-y,2.4px) - .6px))}}',
+    '@keyframes pxa-bob{0%,100%{transform:translateY(var(--px-base-y,0px))}50%{transform:translateY(calc(var(--px-base-y,0px) - .6px))}}',
     '@keyframes pxa-tilt{0%,100%{transform:rotate(0deg)}50%{transform:rotate(1.6deg)}}',
     '@keyframes pxa-wobble{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-1.4deg)}}',
     '@keyframes pxa-blink{0%,86%,100%{transform:scaleY(1)}90%{transform:scaleY(.08)}92%{transform:scaleY(1)}}',
@@ -82,7 +82,7 @@
     '@keyframes pxa-wiggle{0%,100%{transform:translate(0,0)}25%{transform:translate(-.45px,.2px)}75%{transform:translate(.45px,-.2px)}}',
     '@keyframes pxa-smirk{0%,100%{transform:translateX(0)}50%{transform:translateX(.8px)}}',
     '.pixeloids-animated .pixeloids-avatar,.pixeloids-animated .pixeloids-head,.pixeloids-animated .pixeloids-topper,.pixeloids-animated .pixeloids-limbs,.pixeloids-animated .pixeloids-face,.pixeloids-animated .pixeloids-eye,.pixeloids-animated .pixeloids-mouth,.pixeloids-animated .pixeloids-brows,.pixeloids-animated .pixeloids-cheeks{transform-box:fill-box;transform-origin:center}',
-    '.pixeloids-animated .pixeloids-avatar{transform:translateY(var(--px-base-y,2.4px))}',
+    '.pixeloids-animated .pixeloids-avatar{transform:translateY(var(--px-base-y,0px))}',
     '.pixeloids-animated{overflow:visible}',
     '.pixeloids-animated .pixeloids-topper{transform-origin:center bottom}',
     '.pixeloids-animated .pixeloids-limbs{transform-origin:center top}',
@@ -117,18 +117,18 @@
     return {
       profile: pick(rng, MOTIONS),
       vars: [
-        '--px-base-y:' + (2.2 + rng() * 0.8).toFixed(2) + 'px',
+        '--px-base-y:' + (-0.25 + rng() * 0.5).toFixed(2) + 'px',
         '--px-bob-duration:' + (4.2 + rng() * 2.1).toFixed(2) + 's',
         '--px-bob-delay:-' + (rng() * 2.6).toFixed(2) + 's',
-        '--px-blink-duration:' + (5.8 + rng() * 4.2).toFixed(2) + 's',
+        '--px-blink-duration:' + (4.9 + rng() * 3.1).toFixed(2) + 's',
         '--px-blink-delay:-' + (rng() * 3.5).toFixed(2) + 's',
-        '--px-look-duration:' + (6.5 + rng() * 4.5).toFixed(2) + 's',
+        '--px-look-duration:' + (5.6 + rng() * 3.4).toFixed(2) + 's',
         '--px-look-delay:-' + (rng() * 3.2).toFixed(2) + 's',
         '--px-tilt-duration:' + (5.5 + rng() * 3.1).toFixed(2) + 's',
         '--px-tilt-delay:-' + (rng() * 2.1).toFixed(2) + 's',
         '--px-limb-duration:' + (2.4 + rng() * 1.4).toFixed(2) + 's',
         '--px-limb-delay:-' + (rng() * 1.8).toFixed(2) + 's',
-        '--px-mouth-duration:' + (5.2 + rng() * 3.6).toFixed(2) + 's',
+        '--px-mouth-duration:' + (4.6 + rng() * 2.8).toFixed(2) + 's',
         '--px-mouth-delay:-' + (rng() * 2.3).toFixed(2) + 's',
         '--px-topper-duration:' + (5.6 + rng() * 2.6).toFixed(2) + 's',
         '--px-topper-delay:-' + (rng() * 1.7).toFixed(2) + 's'
